@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.transisi {
+    @apply transition-all duration-300 ease-out;
+}
+.text-primary {
+    @apply text-orange-500 font-semibold text-xl;
+}
+.text-seccondary {
+    @apply text-orange-500 font- text-lg;
+}
