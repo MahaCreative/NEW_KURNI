@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agama;
 use App\Models\Darah;
+use App\Models\Dusun;
 use App\Models\Pekerjaan;
 use App\Models\Pendidikan;
 use App\Models\Penduduk;
@@ -13,10 +14,15 @@ use Illuminate\Http\Request;
 
 class GrafikController extends Controller
 {
-    public function show()
+    public function index(Request $request)
     {
+
+
         return response()->json([
+
             'totalPenduduk' => Penduduk::count(),
+            'totalPerempuan' => Penduduk::where('jenis_kelamin', 2)->count(),
+            'totalLaki' => Penduduk::where('jenis_kelamin', 1)->count(),
             'pekerjaan'     => $this->grafikPekerjaan(),
             'pendidikan'    => $this->grafikPendidikan(),
             'perkawinan'    => $this->grafikPerkawinan(),
@@ -25,6 +31,8 @@ class GrafikController extends Controller
             'usia'          => $this->grafikUsia(),
         ]);
     }
+
+
 
     private function grafikPekerjaan()
     {

@@ -1,9 +1,12 @@
 import React from "react";
 import AppLayouts from "@/Layouts/AppLayouts";
+import Card from "@/Components/Card";
+import { Group } from "@mui/icons-material";
+import Grafik from "./Grafik";
 export default function Index() {
     return (
-        <div className="bg-gradient-to-br from-yellow-700 via-yellow-600 to-yellow-500 h-[50vh]">
-            Dashboard
+        <div className="relative z-0 h-[50vh]">
+            <Grafik />
         </div>
     );
 }

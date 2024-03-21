@@ -6,8 +6,29 @@
     @apply transition-all duration-300 ease-out;
 }
 .text-primary {
-    @apply text-orange-500 font-semibold text-xl;
+    @apply text-orange-700 font-semibold text-xl;
 }
-.text-seccondary {
-    @apply text-orange-500 font- text-lg;
+.text-secondary {
+    @apply text-orange-600 font-medium text-lg;
+}
+
+.text-third{
+    @apply text-orange-500 font-light text-base;
+}
+.text-forth{
+    @apply text-white font-light text-base;
+}
+
+.btn-primary{
+    @apply py-1 px-2 text-center capitalize bg-green-500 flex gap-3 items-center hover:bg-green-600 transisi text-white rounded-md font-semibold;
+}
+
+.btn-second {
+    @apply py-1 px-2 text-center capitalize bg-orange-500 flex gap-3 items-center hover:bg-orange-600 transisi text-white rounded-md font-semibold;
+}
+.btn-danger {
+    @apply py-1 px-2 text-center capitalize bg-red-500 flex gap-3 items-center hover:bg-red-600 transisi text-white rounded-md font-semibold;
+}
+.background{
+    @apply bg-gradient-to-br from-orange-600 via-orange-700 to-orange-400;
 }

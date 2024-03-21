@@ -1,35 +1,31 @@
 import { Transition } from "@headlessui/react";
 import { Link, usePage } from "@inertiajs/react";
-import React, { useEffect, useState } from "react";
-
-export default function Navbar() {
+import React, { useEffect, useRef, useState } from "react";
+import MenuIcon from "@mui/icons-material/Menu";
+export default function Navbar({ open, setOpen }) {
     const { desa } = usePage().props;
-    const [fixed, setFixed] = useState(false);
+    const [profile, setProfile] = useState(false);
+    const profileRef = useRef();
+
     useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 5) {
-                setFixed(true);
-            } else {
-                setFixed(false);
+        const profileHandler = (e) => {
+            if (!profileRef.current.contains(e.target)) {
+                setProfile(false);
             }
         };
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
+
+        document.addEventListener("mousedown", profileHandler);
+        return () => [
+            document.removeEventListener("mousedown", profileHandler),
+        ];
     });
+
     return (
         <div>
-            <div
-                className={`${
-                    fixed
-                        ? "fixed top-0 left-0 z-50 from-slate-950/80 via-slate-900/80 to-slate-800/80 backdrop-blur-sm"
-                        : "relative from-slate-950 via-slate-900 to-slate-800 backdrop-blur-none"
-                } w-full bg-gradient-to-br transisi`}
-            >
-                <div className=" flex justify-between items-center text-white transisi px-8 md:px-16 lg:px-24 py-3">
+            <div className={`  w-full `}>
+                <div className=" flex justify-between items-center text-white transisi px-2 md:px-4 lg:px-8 border-b border-white/50">
                     {/* logo */}
-                    <div className="flex gap-3 items-center font-semibold">
+                    <div className="flex gap-3 items-center font-semibold ">
                         <img
                             src={"/storage/" + desa.logo}
                             alt=""
@@ -37,11 +33,50 @@ export default function Navbar() {
                         />
                         <h1>{desa.nama_desa}</h1>
                     </div>
-                    <div className="flex gap-7 text-sm font-light">
-                        <Link>Desa</Link>
-                        <Link>Home</Link>
-                        <Link>Home</Link>
-                        <Link>Home</Link>
+                    {/* menu and logo user */}
+                    <div className="flex gap-7 items-center  font-light text-xl">
+                        <div className={` py-3 transisi`}>
+                            <div
+                                onClick={() => setProfile(!profile)}
+                                className=" hover:cursor-pointer text-slate-950 px-4 flex gap-4 items-center"
+                            >
+                                <img
+                                    src=""
+                                    alt=""
+                                    className="h-[40px] w-[40px] object-cover object-center rounded-full"
+                                />
+                                <p className="text-white font-normal">
+                                    {" "}
+                                    User Name Pengguna
+                                </p>
+                            </div>
+                            <div
+                                ref={profileRef}
+                                className="py-2 px-4 absolute -bottom-22 right-0 relative"
+                            >
+                                <Transition
+                                    show={profile}
+                                    enter="duration-300 ease-out"
+                                    enterFrom="translate-y-5 opacity-50"
+                                    enterTo="translate-y-2 opacity-100"
+                                    leave="duration-300 ease-in-out"
+                                    leaveFrom="translate-y-0 opacity-100"
+                                    leaveTo="translate-y-5 opacity-0"
+                                >
+                                    <div className="bg-white text-slate-950 px-3 py-2 rounded-md absolute">
+                                        <Link>Setting profile</Link>
+                                        <Link>Logout</Link>
+                                    </div>
+                                </Transition>
+                            </div>
+                        </div>
+
+                        <div
+                            onClick={() => setOpen(!open)}
+                            className="hover:cursor-pointer"
+                        >
+                            <MenuIcon color="inherit" fontSize="inherit" />
+                        </div>
                     </div>
                 </div>
             </div>
