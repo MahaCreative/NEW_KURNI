@@ -13,4 +13,9 @@ class DetailDusun extends Model
     {
         return $this->hasMany(Penduduk::class);
     }
+
+    public function dusun()
+    {
+        return $this->belongsTo(Dusun::class);
+    }
 }

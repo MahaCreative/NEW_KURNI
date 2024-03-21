@@ -34,6 +34,6 @@ class DatabaseSeeder extends Seeder
                 DetailDusunSeeder::class,
             ]
         );
-        Penduduk::factory(1000)->create();
+        Penduduk::factory(1)->create();
     }
 }

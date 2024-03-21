@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DetailDusunController;
 use App\Http\Controllers\DusunController;
 use App\Http\Controllers\GrafikController;
+use App\Http\Controllers\PendudukController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -34,3 +35,8 @@ Route::delete('delete-dusun/', [DusunController::class, 'delete'])->name('delete
 Route::post('create-detail-dusun', [DetailDusunController::class, 'store'])->name('post.detail-dusun');
 Route::post('update-detail-dusun', [DetailDusunController::class, 'update'])->name('update.detail-dusun');
 Route::delete('delete-detail-dusun/', [DetailDusunController::class, 'delete'])->name('delete.detail-dusun');
+
+Route::get('penduduk', [PendudukController::class, 'index'])->name('penduduk');
+Route::post('post-penduduk', [PendudukController::class, 'store'])->name('post.penduduk');
+Route::post('update-penduduk', [PendudukController::class, 'update'])->name('update.penduduk');
+Route::delete('delete-penduduk', [PendudukController::class, 'delete'])->name('delete.penduduk');

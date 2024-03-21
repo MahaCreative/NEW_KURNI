@@ -2,7 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Agama;
+use App\Models\Darah;
 use App\Models\Desa;
+use App\Models\Dusun;
+use App\Models\Pekerjaan;
+use App\Models\Pendidikan;
+use App\Models\StatusHubunganDalamKeluarga;
+use App\Models\StatusPerkawinan;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -35,6 +42,13 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'desa' => $desa,
+            'pendidikan' => Pendidikan::all(),
+            'dusun' => Dusun::with('detail_dusun')->get(),
+            'agama' => Agama::all(),
+            'darah' => Darah::all(),
+            'status_hubungan_dalam_keluarga' => StatusHubunganDalamKeluarga::all(),
+            'status_perkawinan' => StatusPerkawinan::all(),
+            'pekerjaan' => Pekerjaan::all(),
             'auth' => [
                 'user' => $request->user(),
             ],
