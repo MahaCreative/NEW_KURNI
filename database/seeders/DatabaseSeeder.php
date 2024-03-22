@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Kelahiran;
 use App\Models\Penduduk;
 use Database\Factories\PendudukFactory;
 use Illuminate\Database\Seeder;
@@ -34,6 +35,7 @@ class DatabaseSeeder extends Seeder
                 DetailDusunSeeder::class,
             ]
         );
-        Penduduk::factory(1)->create();
+        Penduduk::factory(50)->create();
+        Kelahiran::factory(50)->create();
     }
 }
