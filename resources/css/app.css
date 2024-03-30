@@ -12,14 +12,17 @@
     @apply text-orange-600 font-medium text-lg;
 }
 
-.text-third{
+.text-third {
     @apply text-orange-500 font-light text-base;
 }
-.text-forth{
+.text-forth {
     @apply text-white font-light text-base;
 }
 
-.btn-primary{
+.btn-primary {
+    @apply py-1 px-2 text-center capitalize bg-blue-500 flex gap-3 items-center hover:bg-blue-600 transisi text-white rounded-md font-semibold;
+}
+.btn-success {
     @apply py-1 px-2 text-center capitalize bg-green-500 flex gap-3 items-center hover:bg-green-600 transisi text-white rounded-md font-semibold;
 }
 
@@ -29,6 +32,6 @@
 .btn-danger {
     @apply py-1 px-2 text-center capitalize bg-red-500 flex gap-3 items-center hover:bg-red-600 transisi text-white rounded-md font-semibold;
 }
-.background{
+.background {
     @apply bg-gradient-to-br from-orange-600 via-orange-700 to-orange-400;
 }

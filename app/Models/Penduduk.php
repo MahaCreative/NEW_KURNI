@@ -40,6 +40,6 @@ class Penduduk extends Model
 
     public function statusPerkawinan()
     {
-        return $this->belongsTo(StatusHubunganDalamKeluarga::class);
+        return $this->belongsTo(StatusPerkawinan::class);
     }
 }

@@ -17,4 +17,12 @@ class Kelahiran extends Model
     {
         return $this->belongsTo(Agama::class);
     }
+    public function ayah()
+    {
+        return $this->belongsTo(Penduduk::class, 'ayah_id');
+    }
+    public function ibu()
+    {
+        return $this->belongsTo(Penduduk::class, 'ibu_id');
+    }
 }

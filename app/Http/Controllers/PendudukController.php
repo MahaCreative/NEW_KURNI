@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Desa;
+use App\Models\DetailDusun;
+use App\Models\Dusun;
 use App\Models\Penduduk;
 use App\Models\StatusHubunganDalamKeluarga;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class PendudukController extends Controller
@@ -54,6 +58,7 @@ class PendudukController extends Controller
             'alamat'                            => ['nullable', 'string', 'max:191'],
         ]);
         $penduduk = Penduduk::create($attr);
+
         return redirect()->back();
     }
     public function update(Request $request)
@@ -90,5 +95,117 @@ class PendudukController extends Controller
         $nama = $penduduk->nama;
         $penduduk->delete();
         return redirect()->back();
+    }
+
+    public function cetak_penduduk(Request $request)
+    {
+        return inertia('Cetak-penduduk');
+    }
+    public function store_cetak_penduduk(Request $request)
+    {
+        $query = Penduduk::query();
+        $query->with(['detail_dusun' => function ($q) {
+            $q->with('dusun');
+        }, 'golongan_darah']);
+        if ($request->dusun_id) {
+            $query->whereHas('detail_dusun', function ($query) use ($request) {
+                $query->where('dusun_id', $request->dusun_id);
+            });
+        }
+
+        if ($request->darah_id) {
+            $query->where('darah_id', '=', $request->darah_id);
+        }
+        if ($request->agama_id) {
+            $query->where('agama_id', '=', $request->agama_id);
+        }
+        if ($request->pendidikan_id) {
+            $query->where('pendidikan_id', '=', $request->pendidikan_id);
+        }
+        if ($request->pekerjaan_id) {
+            $query->where('pekerjaan_id', '=', $request->pekerjaan_id);
+        }
+        if ($request->status_hubungan_dalam_keluarga_id) {
+            $query->where('status_hubungan_dalam_keluarga_id', '=', $request->status_hubungan_dalam_keluarga_id);
+        }
+        if ($request->status_perkawinan_id) {
+            $query->where('status_perkawinan_id', '=', $request->status_perkawinan_id);
+        }
+
+        if ($request->tanggal_awal) {
+            $query->where('created_at', '>=', $request->tanggal_awal);
+        }
+        if ($request->sampai_tanggal) {
+            $query->where('created_at', '<=', $request->sampai_tanggal);
+        }
+
+        $penduduk = $query->get();
+        $desa = Desa::first();
+        // return $penduduk;
+        return view('pdf.LaporanPenduduk', compact('penduduk', 'desa'));
+    }
+    public function laporan_penduduk(Request $request)
+    {
+        return inertia('Penduduk/LaporanPenduduk');
+    }
+    public function store_laporan_penduduk(Request $request)
+    {
+        // dd($request->all());
+        $query = Penduduk::query();
+        $query->with([
+            'detail_dusun' => function ($q) {
+                $q->with('dusun');
+            }, 'golongan_darah',
+            'pekerjaan',
+            'agama',
+            'pendidikan',
+            'statusHubunganDalamKeluarga',
+            'statusPerkawinan',
+        ]);
+        if ($request->dusun_id) {
+            $query->whereHas('detail_dusun', function ($query) use ($request) {
+                $query->where('dusun_id', $request->dusun_id);
+            });
+        }
+
+        if ($request->darah_id) {
+            $query->where('darah_id', '=', $request->darah_id);
+        }
+        if ($request->agama_id) {
+            $query->where('agama_id', '=', $request->agama_id);
+        }
+        if ($request->pendidikan_id) {
+            $query->where('pendidikan_id', '=', $request->pendidikan_id);
+        }
+        if ($request->pekerjaan_id) {
+            $query->where('pekerjaan_id', '=', $request->pekerjaan_id);
+        }
+        if ($request->status_hubungan_dalam_keluarga_id) {
+            $query->where('status_hubungan_dalam_keluarga_id', '=', $request->status_hubungan_dalam_keluarga_id);
+        }
+        if ($request->status_perkawinan_id) {
+            $query->where('status_perkawinan_id', '=', $request->status_perkawinan_id);
+        }
+
+        if ($request->tanggal_awal) {
+            $query->where('created_at', '>=', $request->tanggal_awal);
+        }
+        if ($request->sampai_tanggal) {
+            $query->where('created_at', '<=', $request->sampai_tanggal);
+        }
+
+        $penduduk = $query->get();
+        $desa = Desa::first();
+        $pdf = Pdf::loadView('pdf.LaporanPenduduk', ['desa' => $desa, 'penduduk' => $penduduk])->setPaper('F4', 'landscape');
+        $pdfPath = 'PDF/Penduduk/LaporanPenduduk.pdf';
+        \Storage::put($pdfPath, $pdf->output());
+        $path = public_path("storage/" . $pdfPath);
+        if (file_exists($path)) {
+            $headers = ['Content-Type: application/pdf'];
+            // dd($path);
+            return response()->download($path, 'LaporanPenjualanHarian.pdf', $headers);
+        } else {
+            abort(404, 'File not found');
+        }
     }
 }

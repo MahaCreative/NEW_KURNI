@@ -15,7 +15,7 @@ export default function Modal({
     return (
         <div
             className={`${
-                open ? "z-[999] opacity-100" : "opacity-0 -z-[99]"
+                open ? "z-[99] opacity-100" : "opacity-0 -z-[99]"
             } transition-all duration-150 fixed  left-0 top-0 w-screen h-screen overflow-hidden bg-gray-950/50 backdrop-blur-sm flex items-center justify-center`}
         >
             <Transition

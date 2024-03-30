@@ -1,38 +1,75 @@
 import Card from "@/Components/Card";
+import Modal from "@/Components/Modal";
 import AppLayouts from "@/Layouts/AppLayouts";
-import { Add, Delete, Edit, Group, RemoveRedEye } from "@mui/icons-material";
+import {
+    Add,
+    Cancel,
+    Check,
+    Delete,
+    Edit,
+    Group,
+    Print,
+    RemoveRedEye,
+} from "@mui/icons-material";
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 
+import Form from "./Form";
+import { MenuItem, Select, Tooltip } from "@mui/material";
+import { Link, router } from "@inertiajs/react";
+import PilihPenduduk from "./PilihPenduduk";
+
 export default function Index(props) {
     const [modalTambah, setModalTambah] = useState(false);
+    const [modalDelete, setModalDelete] = useState(false);
+    const [modalPilihPenduduk, setModalPilihPenduduk] = useState(false);
+    const [modalPertanyaan, setModalPertanyaan] = useState(false);
+    const [model, setModel] = useState(null);
     const { data: kelahiran } = props.kelahiran;
+    const [dataAyah, setDataAyah] = useState([]);
+    const [dataIbu, setDataIbu] = useState([]);
     const columns = [
         {
             name: "#",
             selector: (row) => (
                 <div className="flex gap-1 items-center">
-                    <button
-                        onClick={() => editHandler(row)}
-                        className="btn-second"
-                    >
-                        <Edit color="inherit" fontSize="small" />
-                    </button>
-                    <button
-                        onClick={() => deleteHandler(row)}
-                        className="btn-danger"
-                    >
-                        <Delete color="inherit" fontSize="small" />
-                    </button>
-                    <button
-                        onClick={() => lihatHandler(row)}
-                        className="btn-primary"
-                    >
-                        <RemoveRedEye color="inherit" fontSize="small" />
-                    </button>
+                    <Tooltip title={`Edit Data ${row.nama}`}>
+                        <button
+                            onClick={() => editHandler(row)}
+                            className="btn-second"
+                        >
+                            <Edit color="inherit" fontSize="small" />
+                        </button>
+                    </Tooltip>
+                    <Tooltip title={`Delete Data ${row.nama}`}>
+                        <button
+                            onClick={() => deleteHandler(row)}
+                            className="btn-danger"
+                        >
+                            <Delete color="inherit" fontSize="small" />
+                        </button>
+                    </Tooltip>
+
+                    {row.status_permintaan == "di terima" && (
+                        <Tooltip title={`Cetak Data ${row.nama}`}>
+                            <Link
+                                as="button"
+                                href={route("cetak.suket-lahir", row.id)}
+                                className="btn-success"
+                            >
+                                <Print color="inherit" fontSize="small" />
+                            </Link>
+                        </Tooltip>
+                    )}
                 </div>
             ),
             width: "160px",
+            wrap: true,
+        },
+        {
+            name: "Kode Permintaan",
+            selector: (row) => <div>{row.kd_kelahiran}</div>,
+            width: "130px",
             wrap: true,
         },
         {
@@ -88,27 +125,188 @@ export default function Index(props) {
             width: "110px",
             wrap: true,
         },
+        {
+            name: "Konfirmasi Permintaan",
+            selector: (row) => (
+                <Select
+                    onChange={(e) => konfirmasiHandler(e.target.value, row.id)}
+                    className={`text-xs w-full text-white ${
+                        row.status_permintaan == "di terima"
+                            ? "bg-green-500"
+                            : row.status_permintaan == "di tolak"
+                            ? "bg-red-500"
+                            : "bg-orange-500"
+                    }`}
+                    defaultValue={row.status_permintaan}
+                >
+                    <MenuItem value="">Pilih Status Konfirmasi</MenuItem>
+                    <MenuItem value="di terima">Di terima</MenuItem>
+                    <MenuItem value="di tolak">Di Tolak</MenuItem>
+                    <MenuItem value="menunggu konfirmasi">
+                        Menunggu Konfirmasi
+                    </MenuItem>
+                </Select>
+            ),
+            width: "250px",
+            wrap: true,
+        },
     ];
     const editHandler = (row) => {
         setModel(row);
-        setModalTambah(true);
+        setModalPertanyaan(true);
     };
     const deleteHandler = (row) => {
         setModel(row);
         setModalDelete(true);
     };
-    const lihatHandler = (row) => {
-        setModel(row);
-        setModalLihat(true);
+
+    const konfirmasiHandler = (value, id) => {
+        router.post(route("konfirmasi.kelahiran"), {
+            id: id,
+            konfirmasi: value,
+        });
+    };
+    const getAyah = (row) => {
+        setDataAyah(row);
+        console.log(row);
+    };
+    const getIbu = (row) => {
+        setDataIbu(row);
+        console.log(row);
+    };
+    const lanjutPilih = () => {
+        setModalPilihPenduduk(false);
+        setTimeout(() => {
+            setModalTambah(true);
+        }, 150);
+    };
+    const ubahDataHandler = () => {
+        setModalPilihPenduduk(true);
+        setTimeout(() => {
+            setModalPertanyaan(false);
+        }, 150);
+    };
+    const tidakHandler = () => {
+        setModalPertanyaan(false);
+        setTimeout(() => {
+            setModalPilihPenduduk(true);
+        }, 150);
     };
     return (
         <div className="py-16 px-4 md:px-8 lg:px-16">
+            {/* modal delete */}
+            <Modal
+                open={modalDelete}
+                setOpen={setModalDelete}
+                setModel={setModel}
+                title={"Warning Delete Data"}
+            >
+                <div className="w-[50vw]">
+                    <p>
+                        Yakin ingin menghapus data ini? menghapus data ini akan
+                        menghapus data yang terkait lainnya
+                    </p>
+                    <div className="flex gap-3 py-4">
+                        <Link
+                            as="button"
+                            method="delete"
+                            href={route("delete.kelahiran", {
+                                id: model?.id,
+                            })}
+                            onSuccess={() => {
+                                setModel(null);
+                                setModalDelete(false);
+                            }}
+                            className="btn-primary"
+                        >
+                            <div className="text-white text-xl">
+                                <Check color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Yakin</p>
+                        </Link>
+                        <button
+                            onClick={() => {
+                                setModel(null);
+                                setModalDelete(false);
+                            }}
+                            className="btn-danger"
+                        >
+                            <div className="text-white text-xl">
+                                <Cancel color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Cancell</p>
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+            {/* modal tambah */}
+            <Modal
+                open={modalTambah}
+                setOpen={setModalTambah}
+                setModel={setModel}
+                title={
+                    model
+                        ? `Edit Data Kelahiran ${model?.nama} `
+                        : "Tambah data kelahiran"
+                }
+            >
+                <Form
+                    model={model}
+                    setModel={setModel}
+                    setOpen={setModalTambah}
+                    dataAyah={dataAyah}
+                    dataIbu={dataIbu}
+                />
+            </Modal>
+            <Modal
+                open={modalPilihPenduduk}
+                setOpen={setModalPilihPenduduk}
+                setModel={setModel}
+                title={"Pilih data Ayah dan Ibu terlebih dahulu"}
+            >
+                <PilihPenduduk
+                    lanjutPilih={lanjutPilih}
+                    getAyah={getAyah}
+                    getIbu={getIbu}
+                />
+            </Modal>
+            {/* modal tanyah */}
+            <Modal
+                open={modalPertanyaan}
+                setOpen={setModalPertanyaan}
+                setModel={setModel}
+                title={"Konfirmasi Dahulu"}
+            >
+                <div className="w-[50vw]">
+                    <p>
+                        Yakin ingin menghapus data ini? menghapus data ini akan
+                        menghapus data yang terkait lainnya
+                    </p>
+                    <div className="flex gap-3 py-4">
+                        <button
+                            onClick={ubahDataHandler}
+                            className="btn-primary"
+                        >
+                            <div className="text-white text-xl">
+                                <Check color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Ubah Data</p>
+                        </button>
+                        <button onClick={tidakHandler} className="btn-danger">
+                            <div className="text-white text-xl">
+                                <Cancel color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Tidak Mengubah Data</p>
+                        </button>
+                    </div>
+                </div>
+            </Modal>
             <div className="bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
                 <h1 className="font-bold text-2xl text-orange-500 ">
-                    Penduduk
+                    Data Kelahiran
                 </h1>
                 <button
-                    onClick={() => setModalTambah(true)}
+                    onClick={() => setModalPilihPenduduk(true)}
                     className="btn-primary"
                 >
                     <div className="text-white text-xl font-extrabold">

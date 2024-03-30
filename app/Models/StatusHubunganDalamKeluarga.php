@@ -12,4 +12,8 @@ class StatusHubunganDalamKeluarga extends Model
     {
         return $this->hasMany(Penduduk::class);
     }
+    public function statusHubunganDalamKeluarga()
+    {
+        return $this->belongsTo(StatusHubunganDalamKeluarga::class);
+    }
 }

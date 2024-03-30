@@ -12,51 +12,51 @@ import { useState } from "react";
 import { useEffect } from "react";
 import ReactSelect from "react-select";
 
-export default function Form({ model, setModel, setOpen }) {
+export default function Form({ model, setModel, setOpen, dataAyah, dataIbu }) {
     const { data, setData, post, errors, reset } = useForm({
         nik: "",
-        kk: "",
+        KK: dataAyah.kk,
         nama: "",
         jenis_kelamin: "",
         tempat_lahir: "",
         tanggal_lahir: "",
         agama_id: "",
         darah_id: "",
-        nik_ayah: "",
-        nik_ibu: "",
-        nama_ayah: "",
-        nama_ibu: "",
+        nik_ayah: dataAyah?.nik,
+        nik_ibu: dataIbu?.nik,
+        nama_ayah: dataAyah?.nama,
+        nama_ibu: dataIbu?.nama,
+        ayah_id: dataAyah?.id,
+        ibu_id: dataIbu?.id,
+        tempat_dilahirkan: "",
     });
     useEffect(() => {
         setData({
             ...data,
             id: model ? model.id : "",
             nik: model ? model.nik : "",
-            kk: model ? model.kk : "",
+            KK: dataAyah?.kk,
             nama: model ? model.nama : "",
             jenis_kelamin: model ? model.jenis_kelamin : "",
             tempat_lahir: model ? model.tempat_lahir : "",
             tanggal_lahir: model ? model.tanggal_lahir : "",
             agama_id: model ? model.agama_id : "",
             darah_id: model ? model.darah_id : "",
-            nik_ayah: model ? model.nik_ayah : "",
-            nik_ibu: model ? model.nik_ibu : "",
-            nama_ayah: model ? model.nama_ayah : "",
-            nama_ibu: model ? model.nama_ibu : "",
+            nik_ayah: dataAyah?.nik,
+            nik_ibu: dataIbu?.nik,
+            nama_ayah: dataAyah?.nama,
+            nama_ibu: dataIbu?.nama,
+            tempat_dilahirkan: model ? model.tempat_dilahirkan : "",
+            ayah_id: dataAyah?.id,
+            ibu_id: dataIbu?.id,
         });
     }, [model]);
-    const { pendidikan } = usePage().props;
     const { agama } = usePage().props;
     const { darah } = usePage().props;
-    const { dusun } = usePage().props;
-    const { pekerjaan } = usePage().props;
-    const { status_hubungan_dalam_keluarga } = usePage().props;
-    const { status_perkawinan } = usePage().props;
-    const [modelDusun, setModelDusun] = useState(null);
 
     const submitHandler = (e) => {
         e.preventDefault();
-        post(route("post.penduduk"), {
+        post(route("post.kelahiran"), {
             onSuccess: () => {
                 setModel(null);
                 setOpen(false);
@@ -65,18 +65,14 @@ export default function Form({ model, setModel, setOpen }) {
     };
     const updateHandler = (e) => {
         e.preventDefault();
-        post(route("update.penduduk"), {
+        post(route("update.kelahiran"), {
             onSuccess: () => {
                 setModel(null);
                 setOpen(false);
             },
         });
     };
-    const pilihDusun = (e) => {
-        setModelDusun(e.target.value);
-        setData({ ...data, dusun: e.target.value.nama });
-        console.log(e.target.value.nama);
-    };
+
     return (
         <div className="w-[90vw] max-h-[80vh] overflow-y-auto">
             <form onSubmit={model ? updateHandler : submitHandler}>
@@ -99,12 +95,13 @@ export default function Form({ model, setModel, setOpen }) {
                     </div>
                     <div>
                         <InputText
+                            disabled
                             label="KK"
-                            name="kk"
-                            error={errors.kk ? true : false}
-                            helperText={errors.kk}
-                            value={data.kk}
-                            defaultValue={data.kk}
+                            name="KK"
+                            error={errors.KK ? true : false}
+                            helperText={errors.KK}
+                            value={data.KK}
+                            defaultValue={model?.KK}
                             onChange={(e) =>
                                 setData({
                                     ...data,
@@ -166,6 +163,31 @@ export default function Form({ model, setModel, setOpen }) {
                                 })
                             }
                         />
+                    </FormControl>
+                    <FormControl fullWidth>
+                        <TextField
+                            id="outlined-select-currency"
+                            select
+                            label="Tempat Dilahirkan"
+                            name="tempat_dilahirkan"
+                            error={errors.tempat_dilahirkan ? true : false}
+                            helperText={errors.tempat_dilahirkan}
+                            value={data.tempat_dilahirkan}
+                            defaultValue={data.tempat_dilahirkan}
+                            onChange={(e) =>
+                                setData({
+                                    ...data,
+                                    [e.target.name]: e.target.value,
+                                })
+                            }
+                        >
+                            <MenuItem value="">Pilih Tempat Lahiran</MenuItem>
+                            <MenuItem value="rumah sakit">Rumah Sakit</MenuItem>
+                            <MenuItem value="puskesmas">Puskesmas</MenuItem>
+                            <MenuItem value="poliklinik">Poliklinik</MenuItem>
+                            <MenuItem value="rumah">Rumah</MenuItem>
+                            <MenuItem value="lainnya">Lainnya</MenuItem>
+                        </TextField>
                     </FormControl>
                     <FormControl fullWidth>
                         <InputText
@@ -237,6 +259,7 @@ export default function Form({ model, setModel, setOpen }) {
                 <div className="grid grid-cols 1 md:grid-cols-2 gap-3 my-3">
                     <FormControl fullWidth>
                         <InputText
+                            disabled
                             label="NIK Ayah"
                             name="nik_ayah"
                             error={errors.nik_ayah ? true : false}
@@ -253,6 +276,7 @@ export default function Form({ model, setModel, setOpen }) {
                     </FormControl>
                     <FormControl fullWidth>
                         <InputText
+                            disabled
                             label="Nama Ayah"
                             name="nama_ayah"
                             error={errors.nama_ayah ? true : false}
@@ -269,6 +293,7 @@ export default function Form({ model, setModel, setOpen }) {
                     </FormControl>
                     <FormControl fullWidth>
                         <InputText
+                            disabled
                             label="Nik Ibu"
                             name="nik_ibu"
                             error={errors.nik_ibu ? true : false}
@@ -285,6 +310,7 @@ export default function Form({ model, setModel, setOpen }) {
                     </FormControl>
                     <FormControl fullWidth>
                         <InputText
+                            disabled
                             label="Nama Ibu"
                             name="nama_ibu"
                             error={errors.nama_ibu ? true : false}
