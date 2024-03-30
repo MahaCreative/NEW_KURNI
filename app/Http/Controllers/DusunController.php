@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dusun;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class DusunController extends Controller
@@ -18,7 +19,7 @@ class DusunController extends Controller
     {
         $request->validate(['nama' => ['required', 'string', 'min:6']]);
         $dusun = Dusun::create(['nama' => $request->nama]);
-        Role::create(['name' => $request->nama, 'guard_name' => 'web']);
+        $permission = Role::create(['name' => $dusun->nama]);
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil menambah data dusun baru']);
     }
 
@@ -27,7 +28,9 @@ class DusunController extends Controller
         $request->validate(['nama' => ['required', 'string', 'min:6']]);
         $dusun = Dusun::findOrFail($request->id);
         $nama = $dusun->nama;
+        $permission = Role::where('name', $nama)->first();
         $dusun->update(['nama' => $request->nama]);
+        $permission->update(['name' => $dusun->nama]);
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil memperbaharui data dusun ' . $nama]);
     }
 
@@ -36,9 +39,8 @@ class DusunController extends Controller
 
         $dusun = Dusun::findOrFail($request->id);
         $nama = $dusun->nama;
-        $role = Role::where('name', '=', $nama);
-        $role->delete(); // Menghapus role
-        $dusun->delete();
+        $permission = Role::where('name', $nama)->first();
+        $permission->delete();
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil menghapus dusun ' . $nama]);
     }
 }

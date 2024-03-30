@@ -56,12 +56,13 @@
         td {
             font-size: 8pt;
             color: black;
+            text-align: left;
         }
 
         td,
         th {
             border: 1px solid #979797;
-            text-align: left;
+
             padding: 8px;
 
         }
@@ -94,29 +95,36 @@
             <table style="border-collapse: collapse; width:100%;">
                 <thead style="width: 100%">
                     <tr>
-                        <th>No</th>
-                        <th>NIK</th>
-                        <th>KK</th>
-                        <th>Nama Lengkap</th>
-                        <th>Jenis Kelamin</th>
-                        <th>Tempat Tanggal Lahir</th>
-                        <th>Dusun</th>
-                        <th>Pekerjaan</th>
-                        <th>Pendidikan</th>
-                        <th>Status Perkawinan</th>
-                        <th>SHDK</th>
-
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">KK</th>
+                        <th rowspan="2">Nama Lengkap</th>
+                        <th rowspan="2">TTL</th>
+                        <th rowspan="2">Jenis Kelamin</th>
+                        <th rowspan="2">Agama</th>
+                        <th rowspan="2">Golongan Darah</th>
+                        <th rowspan="2">Warga Dusun</th>
+                        <th rowspan="2">Tempat Dilahirkan</th>
+                        <th colspan="4">Data Orang Tua</th>
+                    </tr>
+                    <tr>
+                        <th>NIK Ayah</th>
+                        <th>Nama Ayah</th>
+                        <th>NIK Ibu</th>
+                        <th>Nama Ibu</th>
                     </tr>
 
                 </thead>
                 <tbody>
-                    @if (count($penduduk) > 0)
-                        @foreach ($penduduk as $key => $item)
+
+                    @if (count($kelahiran) > 0)
+                        @foreach ($kelahiran as $key => $item)
                             <tr>
-                                <td>{{ $key++ }}</td>
-                                <td>{{ $item->nik }}</td>
-                                <td>{{ $item->kk }}</td>
+                                <td>{{ $key + 1 }}</td>
+                                <td>{{ $item->KK }}</td>
                                 <td>{{ $item->nama }}</td>
+                                <td>
+                                    {{ $item->tempat_lahir . ', ' . $item->tanggal_lahir }}
+                                </td>
                                 <td>
                                     @if ($item->jenis_kelamin == '1')
                                         Laki-Laki
@@ -124,14 +132,14 @@
                                         Perempuan
                                     @endif
                                 </td>
-                                <td>
-                                    {{ $item->tempat_lahir . ', ' . $item->tanggal_lahir }}
-                                </td>
+                                <td>{{ $item->agama->nama }}</td>
+                                <td>{{ $item->golongan_darah->golongan }} Orang</td>
                                 <td>{{ $item->detail_dusun->dusun->nama }}</td>
-                                <td>{{ $item->pekerjaan->nama }}</td>
-                                <td>{{ $item->pendidikan->nama }}</td>
-                                <td>{{ $item->statusPerkawinan->nama }}</td>
-                                <td>{{ $item->statusHubunganDalamKeluarga->nama }}</td>
+                                <td>{{ $item->tempat_dilahirkan }}</td>
+                                <td>{{ $item->ayah->nik }}</td>
+                                <td>{{ $item->ayah->nama }}</td>
+                                <td>{{ $item->ibu->nik }}</td>
+                                <td>{{ $item->ibu->nama }}</td>
 
                             </tr>
                         @endforeach

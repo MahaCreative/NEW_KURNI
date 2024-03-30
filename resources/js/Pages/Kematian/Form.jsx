@@ -436,7 +436,9 @@ export default function Form({ model, setModel, setOpen, isUpdate = false }) {
                                 })
                             }
                         >
-                            <MenuItem value={null}>Pilih Dusun</MenuItem>
+                            <MenuItem value={null}>
+                                Pilih Sebab Kematian
+                            </MenuItem>
                             <MenuItem value={"sakit biasa / tua"}>
                                 Sakit Biasa / Tua
                             </MenuItem>

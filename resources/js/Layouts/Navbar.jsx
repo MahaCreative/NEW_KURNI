@@ -6,7 +6,7 @@ export default function Navbar({ open, setOpen }) {
     const { desa } = usePage().props;
     const [profile, setProfile] = useState(false);
     const profileRef = useRef();
-
+    const { auth } = usePage().props;
     useEffect(() => {
         const profileHandler = (e) => {
             if (!profileRef.current.contains(e.target)) {
@@ -41,18 +41,18 @@ export default function Navbar({ open, setOpen }) {
                                 className=" hover:cursor-pointer text-slate-950 px-4 flex gap-4 items-center"
                             >
                                 <img
-                                    src=""
+                                    src={"/storage/" + auth.user.foto}
                                     alt=""
                                     className="h-[40px] w-[40px] object-cover object-center rounded-full"
                                 />
                                 <p className="text-white font-normal">
                                     {" "}
-                                    User Name Pengguna
+                                    {auth.user?.name}
                                 </p>
                             </div>
                             <div
                                 ref={profileRef}
-                                className="py-2 px-4 absolute -bottom-22 right-0 relative"
+                                className="py-2 px-4 relative -bottom-22 left-0 z-[999]"
                             >
                                 <Transition
                                     show={profile}
@@ -63,9 +63,19 @@ export default function Navbar({ open, setOpen }) {
                                     leaveFrom="translate-y-0 opacity-100"
                                     leaveTo="translate-y-5 opacity-0"
                                 >
-                                    <div className="bg-white text-slate-950 px-3 py-2 rounded-md absolute">
-                                        <Link>Setting profile</Link>
-                                        <Link>Logout</Link>
+                                    <div className="bg-white text-slate-950 px-3 py-2 rounded-md absolute z-[999999]">
+                                        <Link
+                                            className="hover:cursor-pointer hover:text-white hover:bg-orange-600 block px-2 py-2 rounded-md"
+                                            as="div"
+                                        >
+                                            Setting profile
+                                        </Link>
+                                        <Link
+                                            href={route("logout")}
+                                            className="hover:cursor-pointer hover:text-white hover:bg-orange-600 block px-2 py-2 rounded-md"
+                                        >
+                                            Logout
+                                        </Link>
                                     </div>
                                 </Transition>
                             </div>

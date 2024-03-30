@@ -97,19 +97,18 @@
                         <th>No</th>
                         <th>NIK</th>
                         <th>KK</th>
-                        <th>Nama Lengkap</th>
-                        <th>Jenis Kelamin</th>
+                        <th>Nama Kepala Keluarga</th>
                         <th>Tempat Tanggal Lahir</th>
-                        <th>Dusun</th>
                         <th>Pekerjaan</th>
                         <th>Pendidikan</th>
-                        <th>Status Perkawinan</th>
-                        <th>SHDK</th>
-
+                        <th>Jumlah Anggota Keluarga</th>
+                        <th>Dusun</th>
+                        <th>RW/RT</th>
                     </tr>
 
                 </thead>
                 <tbody>
+
                     @if (count($penduduk) > 0)
                         @foreach ($penduduk as $key => $item)
                             <tr>
@@ -118,21 +117,14 @@
                                 <td>{{ $item->kk }}</td>
                                 <td>{{ $item->nama }}</td>
                                 <td>
-                                    @if ($item->jenis_kelamin == '1')
-                                        Laki-Laki
-                                    @else
-                                        Perempuan
-                                    @endif
-                                </td>
-                                <td>
                                     {{ $item->tempat_lahir . ', ' . $item->tanggal_lahir }}
                                 </td>
-                                <td>{{ $item->detail_dusun->dusun->nama }}</td>
-                                <td>{{ $item->pekerjaan->nama }}</td>
-                                <td>{{ $item->pendidikan->nama }}</td>
-                                <td>{{ $item->statusPerkawinan->nama }}</td>
-                                <td>{{ $item->statusHubunganDalamKeluarga->nama }}</td>
+                                <td>{{ $item->pekerjaan->nama }} Orang</td>
+                                <td>{{ $item->pendidikan->nama }} Orang</td>
 
+                                <td>{{ $item->jumlah_keluarga }} Orang</td>
+                                <td>{{ $item->detail_dusun->dusun->nama }}</td>
+                                <td>{{ $item->detail_dusun->rw }} / {{ $item->detail_dusun->rw }}</td>
                             </tr>
                         @endforeach
                     @else
@@ -153,6 +145,7 @@
 
                         </tr>
                     @endif
+                </tbody>
                 </tbody>
             </table>
         </div>

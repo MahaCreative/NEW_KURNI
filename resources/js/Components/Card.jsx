@@ -21,11 +21,11 @@ export default function Card({
                     >
                         {count}
                     </p>
-                    <p
+                    <div
                         className={`font-extralight ${textPrimary} text-xs md:text-base  lg:text-md transisi`}
                     >
                         {title}
-                    </p>
+                    </div>
                 </div>
                 <div
                     className={`${textSecondary} text-xl md:text-3xl lg:text-5xl transisi p-2 bg-orange-500 rounded-full `}

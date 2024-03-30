@@ -5,14 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\Desa;
 use App\Models\Kelahiran;
 use App\Models\Penduduk;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class KelahiranController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Kelahiran::query();
-        $kelahiran = $query->with('agama', 'golongan_darah', 'ayah', 'ibu')->paginate(40);
+        $query = Kelahiran::query()->with(['agama', 'golongan_darah', 'ayah', 'ibu', 'detail_dusun' => function ($q) {
+            $q->with('dusun');
+        }]);
+
+        $roles = $request->user()->getRoleNames()[0];
+        // dd($roles == 'kepala desa' or $roles == 'sekretaris desa');
+        if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+            $kelahiran = $query->get();
+        } else {
+            $kelahiran = $query->whereHas('detail_dusun.dusun', function ($q) use ($roles) {
+                $q->where('nama', '=', $roles);
+            })->get();
+        }
+        // dd($kelahiran);
         return inertia('Kelahiran/Index', compact('kelahiran'));
     }
 
@@ -196,5 +209,58 @@ class KelahiranController extends Controller
         }])->findOrFail($request->id);
         // dd($kelahiran);
         return inertia('Kelahiran/CetakSuket', compact('penduduk'));
+    }
+
+    public function export_laporan(Request $request)
+    {
+        $kelahiran = $this->get_data($request);
+        $desa = Desa::first();
+        $pdf = Pdf::loadView('pdf.LaporanDataKelahiran', ['desa' => $desa, 'kelahiran' => $kelahiran])->setPaper('F4', 'landscape');
+        $pdfPath = 'PDF/Penduduk/Laporan-Data-Kelahiran.pdf';
+        \Storage::put($pdfPath, $pdf->output());
+        $path = public_path("storage/" . $pdfPath);
+        if (file_exists($path)) {
+            $headers = ['Content-Type: application/pdf'];
+            // dd($path);
+            return response()->download($path, 'Laporan-Data-Kelahiran.pdf', $headers);
+        } else {
+            abort(404, 'File not found');
+        }
+    }
+
+    public function cetak_laporan(Request $request)
+    {
+        $kelahiran = $this->get_data($request);
+        $desa = Desa::first();
+
+        return view('pdf.LaporanDataKelahiran', compact('desa', 'kelahiran'));
+    }
+
+    public function get_data($request)
+    {
+        $query = Kelahiran::with(['detail_dusun' => function ($q) {
+            $q->with('dusun');
+        }]);
+        // cek roles nya
+        $roles = $request->user()->getRoleNames()[0];
+        if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+            if ($request->dusun_id) {
+                $query->whereHas('detail_dusun', function ($query) use ($request) {
+                    $query->where('dusun_id', '=', $request->dusun_id);
+                });
+            }
+        } else {
+            $query->whereHas('detail_dusun.dusun', function ($query) use ($roles) {
+                $query->where('nama', $roles);
+            });
+        }
+        if ($request->tanggal_awal) {
+            $query->where('tanggal_lahir', '>=', $request->tanggal_awal);
+        }
+        if ($request->sampai_tanggal) {
+            $query->where('tanggal_lahir', '<=', $request->sampai_tanggal);
+        }
+        $kk = $query->get();
+        return $kk;
     }
 }

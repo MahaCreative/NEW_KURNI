@@ -24,12 +24,15 @@ import Form from "./FormPindahKeluar";
 import Card from "@/Components/Card";
 import DataTable from "react-data-table-component";
 import { Tooltip } from "@mui/material";
+import FormExport from "./FormExport";
 
 export default function Index(props) {
     const [modalPilihan, setModalPilihan] = useState(false);
     const [modalPilihPenduduk, setModalPilihPenduduk] = useState(false);
     const [modelPenduduk, setModelPenduduk] = useState(null);
     const [modalDelete, setModalDelete] = useState(false);
+    const [modalExport, setModalExport] = useState(false);
+    const pindah = props.pindah;
     const pindahMasuk = props.pindahMasuk;
     const pindahKeluar = props.pindahKeluar;
     const jumlahPermintaan = props.jumlahPermintaan;
@@ -78,7 +81,6 @@ export default function Index(props) {
         setModelPenduduk(row);
     };
 
-    const { data: pindah } = props.pindah;
     const deleteHandler = (row) => {
         setModel(row);
         setModalDelete(true);
@@ -106,19 +108,23 @@ export default function Index(props) {
                     </Tooltip>
                 </div>
             ),
-            width: "150px",
+            width: "110px",
             wrap: true,
         },
         {
             name: "NIK / KK",
             selector: (row) => (
-                <div>
-                    <p className="py-1 px-3 bg-green-500 my-2 rounded-md text-white w-full">
-                        NIK : {row.nik}
-                    </p>
-                    <p className="py-1 px-3 bg-green-500 my-2 rounded-md text-white w-full">
-                        KK : {row.kk}
-                    </p>
+                <div className="w-full">
+                    <Tooltip title={"NIK"}>
+                        <p className="py-1 px-1 text-xs bg-green-500 my-2 rounded-md text-white w-full">
+                            {row.nik}
+                        </p>
+                    </Tooltip>
+                    <Tooltip title={"KK"}>
+                        <p className="py-1 px-1 text-xs bg-green-500 my-2 rounded-md text-white w-full">
+                            {row.kk}
+                        </p>
+                    </Tooltip>
                 </div>
             ),
         },
@@ -132,11 +138,11 @@ export default function Index(props) {
         {
             name: "Alamat Asal",
             selector: (row) => (
-                <div>
-                    <p>Desa Asal : {row.desa_asal}</p>
-                    <p>Dusun Asal : {row.dusun_asal}</p>
-                    <p>RW/RT Asal : {row.rw_asal + "/" + row.rt_asal}</p>
-                    <p>Alamat Asal : {row.alamat_asal}</p>
+                <div className="text-xs">
+                    <p>Desa : {row.desa_asal}</p>
+                    <p>Dusun : {row.dusun_asal}</p>
+                    <p>RW/RT : {row.rw_asal + "/" + row.rt_asal}</p>
+                    <p>Alamat : {row.alamat_asal}</p>
                 </div>
             ),
             wrap: true,
@@ -144,11 +150,11 @@ export default function Index(props) {
         {
             name: "Alamat Tujuan",
             selector: (row) => (
-                <div>
-                    <p>Desa Tujuan : {row.desa_tujuan}</p>
-                    <p>Dusun Tujuan : {row.dusun_tujuan}</p>
-                    <p>RW/RT Tujuan : {row.rw_tujuan + "/" + row.rt_tujuan}</p>
-                    <p>Alamat Tujuan : {row.alamat_tujuan}</p>
+                <div className="text-xs">
+                    <p>Desa : {row.desa_tujuan}</p>
+                    <p>Dusun : {row.dusun_tujuan}</p>
+                    <p>RW/RT : {row.rw_tujuan + "/" + row.rt_tujuan}</p>
+                    <p>Alamat : {row.alamat_tujuan}</p>
                 </div>
             ),
             wrap: true,
@@ -157,7 +163,7 @@ export default function Index(props) {
         {
             name: <p className="text-center">Jumlah Keluarga Ikut </p>,
             selector: (row) => (
-                <div className="text-center w-full">
+                <div className="text-center w-full text-xs">
                     {row.pengikut
                         ? row.pengikut.length + " Keluarga"
                         : "0 Pengikut"}
@@ -169,17 +175,17 @@ export default function Index(props) {
         {
             name: "Kategori Pindah",
             selector: (row) => (
-                <div>
+                <div className="text-[8pt]">
                     <p
                         className={`${
                             row.kategori_pindah == "keluar"
                                 ? "bg-red-500 "
                                 : "bg-green-500"
-                        } text-white py-2 px-3 rounded-md`}
+                        } text-white py-2 px-1 rounded-md`}
                     >
                         {row.kategori_pindah == "keluar"
-                            ? `Keluar Dari Desa ${desa.nama_desa}`
-                            : `Masuk Ke Desa ${desa.nama_desa}`}
+                            ? `Keluar Dari Desa`
+                            : `Masuk Ke Desa`}
                     </p>
                 </div>
             ),
@@ -287,6 +293,13 @@ export default function Index(props) {
     };
     return (
         <div className="py-16 px-4 md:px-8 lg:px-16">
+            <Modal
+                open={modalExport}
+                setOpen={setModalExport}
+                title={"Export / Cetak Laporan"}
+            >
+                <FormExport />
+            </Modal>
             {/* Modal Pilihan */}
             <Modal
                 open={modalPilihan}
@@ -376,15 +389,26 @@ export default function Index(props) {
                 <h1 className="font-bold text-2xl text-orange-500 ">
                     Data Pindahan Penduduk
                 </h1>
-                <button
-                    onClick={() => setModalPilihan(true)}
-                    className="btn-primary"
-                >
-                    <div className="text-white text-xl font-extrabold">
-                        <Add color="inherit" fontSize="inherit" />
-                    </div>
-                    <p>Tambah</p>
-                </button>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => setModalPilihan(true)}
+                        className="btn-primary"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Add color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Tambah</p>
+                    </button>
+                    <button
+                        onClick={() => setModalExport(true)}
+                        className="btn-success"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Add color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Export / Cetak Laporan</p>
+                    </button>
+                </div>
             </div>
             {/* Card  */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 my-3">

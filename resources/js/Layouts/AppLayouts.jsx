@@ -18,10 +18,14 @@ import {
     PictureAsPdf,
 } from "@mui/icons-material";
 import MenuLink from "@/Components/MenuLink";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function AppLayouts({ children, title, deskription }) {
     const [open, setOpen] = useState(false);
+    const [audioSrc, setAudioSrc] = useState("");
+    const { flash } = usePage().props;
     const { desa } = usePage().props;
+    const { auth } = usePage().props;
     const sidebarRef = useRef();
     useEffect(() => {
         let handler = (e) => {
@@ -34,8 +38,31 @@ export default function AppLayouts({ children, title, deskription }) {
             document.removeEventListener("mousedown", handler);
         };
     });
+    const audioRef = useRef();
+    useEffect(() => {
+        flash.type && toast[flash.type](flash.message);
+        setTimeout(() => {
+            if (flash.type == "success") {
+                setAudioSrc("Audio/success.mp3");
+            } else {
+                setAudioSrc("Audio/errors.mp3");
+            }
+            if (audioSrc && audioRef.current) {
+                audioRef.current.play(); // Memulai pemutaran audio
+            }
+        }, 350);
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause(); // Menghentikan pemutaran audio
+                audioRef.current.currentTime = 0; // Mengatur ulang waktu audio ke awal
+            }
+        };
+    }, [flash]);
+    console.log(auth);
     return (
         <div className="font-fira tracking-tighter leading-tight min-h-screen overflow-x-hidden bg-orange-500 relative">
+            <Toaster />
+            <audio preload="auto" ref={audioRef} src={audioSrc} />
             <Head title={title} />
 
             <div className="">
@@ -95,28 +122,81 @@ export default function AppLayouts({ children, title, deskription }) {
                                     Menu Kelola Data
                                 </h1>
                             </div>
-                            <MenuLink
-                                active={route().current("desa")}
-                                href={route("desa")}
-                                icon={
-                                    <LocationCity
-                                        color="inherit"
-                                        fontSize="inherit"
+                            {auth.roles == "kepala desa" && (
+                                <>
+                                    <MenuLink
+                                        active={route().current("user")}
+                                        href={route("user")}
+                                        icon={
+                                            <LocationCity
+                                                color="inherit"
+                                                fontSize="inherit"
+                                            />
+                                        }
+                                        title={"Kelola User"}
                                     />
-                                }
-                                title={"Profil Desa"}
-                            />
-                            <MenuLink
-                                active={route().current("dusun")}
-                                href={route("dusun")}
-                                icon={
-                                    <MapsHomeWork
-                                        color="inherit"
-                                        fontSize="inherit"
+                                    <MenuLink
+                                        active={route().current("desa")}
+                                        href={route("desa")}
+                                        icon={
+                                            <LocationCity
+                                                color="inherit"
+                                                fontSize="inherit"
+                                            />
+                                        }
+                                        title={"Profil Desa"}
                                     />
-                                }
-                                title={"Kelola Dusun"}
-                            />
+                                    <MenuLink
+                                        active={route().current("dusun")}
+                                        href={route("dusun")}
+                                        icon={
+                                            <MapsHomeWork
+                                                color="inherit"
+                                                fontSize="inherit"
+                                            />
+                                        }
+                                        title={"Kelola Dusun"}
+                                    />
+                                </>
+                            )}
+                            {auth.roles == "sekretaris desa" && (
+                                <>
+                                    <MenuLink
+                                        active={route().current("user")}
+                                        href={route("user")}
+                                        icon={
+                                            <LocationCity
+                                                color="inherit"
+                                                fontSize="inherit"
+                                            />
+                                        }
+                                        title={"Kelola User"}
+                                    />
+                                    <MenuLink
+                                        active={route().current("desa")}
+                                        href={route("desa")}
+                                        icon={
+                                            <LocationCity
+                                                color="inherit"
+                                                fontSize="inherit"
+                                            />
+                                        }
+                                        title={"Profil Desa"}
+                                    />
+                                    <MenuLink
+                                        active={route().current("dusun")}
+                                        href={route("dusun")}
+                                        icon={
+                                            <MapsHomeWork
+                                                color="inherit"
+                                                fontSize="inherit"
+                                            />
+                                        }
+                                        title={"Kelola Dusun"}
+                                    />
+                                </>
+                            )}
+
                             <MenuLink
                                 active={route().current("penduduk")}
                                 href={route("penduduk")}
@@ -170,55 +250,6 @@ export default function AppLayouts({ children, title, deskription }) {
                                 title={"Kelola Data Pindah"}
                             />
                             <div className="p-1 w-full border-b border-white/50"></div>
-                            <div className="px-3 ">
-                                <h1 className="text-lg font-medium text-orange-950">
-                                    Menu Laporan
-                                </h1>
-                            </div>
-                            <MenuLink
-                                active={route().current("laporan.penduduk")}
-                                href={route("laporan.penduduk")}
-                                icon={
-                                    <PictureAsPdf
-                                        color="inherit"
-                                        fontSize="inherit"
-                                    />
-                                }
-                                title={"Laporan Data Penduduk"}
-                            />
-                            <MenuLink
-                                active={route().current("laporan.penduduk")}
-                                href={route("laporan.penduduk")}
-                                icon={
-                                    <PictureAsPdf
-                                        color="inherit"
-                                        fontSize="inherit"
-                                    />
-                                }
-                                title={"Laporan Data Penduduk"}
-                            />
-                            <MenuLink
-                                active={route().current("pindah")}
-                                href={route("pindah")}
-                                icon={
-                                    <PictureAsPdf
-                                        color="inherit"
-                                        fontSize="inherit"
-                                    />
-                                }
-                                title={"Laporan Data Kematian"}
-                            />
-                            <MenuLink
-                                active={route().current("pindah")}
-                                href={route("pindah")}
-                                icon={
-                                    <MoveUp
-                                        color="inherit"
-                                        fontSize="inherit"
-                                    />
-                                }
-                                title={"Kelola Data Kelahiran"}
-                            />
                         </div>
                     </div>
                 </Transition>

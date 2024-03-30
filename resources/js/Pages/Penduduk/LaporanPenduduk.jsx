@@ -22,7 +22,6 @@ export default function LaporanPenduduk() {
     const { data, setData, post, errors, reset } = useForm({
         dusun_id: "",
         darah_id: "",
-        darah_id: "",
         agama_id: "",
         pendidikan_id: "",
         pekerjaan_id: "",
@@ -32,40 +31,33 @@ export default function LaporanPenduduk() {
         tanggal_awal: "",
     });
     const exportHandler = () => {
-        fetch("export-laporan-penduduk")
-            .then((response) => response.blob())
-            .then((blob) => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
+        axios
+            .get(route("export.laporan-penduduk"), {
+                responseType: "arraybuffer", // Tentukan tipe respons sebagai arraybuffer
+                params: data,
+            })
+            .then((response) => {
+                const blob = new Blob([response.data], {
+                    type: "application/pdf",
+                }); // Buat objek blob dari arraybuffer
+                const url = window.URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute("download", "Laporan Penduduk.pdf");
+                link.setAttribute("download", "Laporan-data-penduduk.pdf");
                 document.body.appendChild(link);
                 link.click();
             })
             .catch((error) => console.error("error downloading PDF:", error));
     };
     const cetakHandler = () => {
-        post(route("cetak.laporan-penduduk"));
+        window.open(route("cetak.laporan-penduduk", data));
     };
+    console.log(data.dusun_id);
     return (
-        <div className="py-16 px-4 md:px-8 lg:px-16">
-            <div className="bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
-                <h1 className="font-bold text-2xl text-orange-500 ">
-                    Penduduk
-                </h1>
-                <Link href={route("penduduk")} className="btn-primary">
-                    <div className="text-white text-xl font-extrabold">
-                        <ArrowBack color="inherit" fontSize="inherit" />
-                    </div>
-                    <p>Kembali</p>
-                </Link>
-            </div>
+        <div className="w-[90vw] md:w-[50vw]">
             <div className="w-full h-full flex justify-center">
-                <div className="bg-white rounded-md py-2 px-4 w-full">
-                    <div className="border-b border-orange-500 py-2 px-4 font-bold text-orange-500 flex justify-center">
-                        Laporan Data Penduduk
-                    </div>
-                    <div className="my-3">
+                <div className="bg-white rounded-md px-4 w-full">
+                    <div className="">
                         <p className="my-7 text-xl text-orange-400">
                             Filter Pencarian Data Penduduk
                         </p>
@@ -79,7 +71,6 @@ export default function LaporanPenduduk() {
                                     error={errors.dusun_id ? true : false}
                                     helperText={errors.dusun_id}
                                     value={data.dusun_id}
-                                    defaultValue={data.dusun_id}
                                     onChange={(e) =>
                                         setData({
                                             ...data,
@@ -102,7 +93,6 @@ export default function LaporanPenduduk() {
                                     label="Golongan Darah"
                                     name="darah_id"
                                     value={data.darah_id}
-                                    defaultValue={data.darah_id}
                                     error={errors.golongan_darah ? true : false}
                                     helperText={errors.golongan_darah}
                                     onChange={(e) =>
@@ -129,7 +119,6 @@ export default function LaporanPenduduk() {
                                     label="Agama"
                                     name="agama_id"
                                     value={data.agama_id}
-                                    defaultValue={data.agama_id}
                                     error={errors.agama ? true : false}
                                     helperText={errors.agama}
                                     onChange={(e) =>
@@ -154,7 +143,6 @@ export default function LaporanPenduduk() {
                                     label="Pendidikan"
                                     name="pendidikan_id"
                                     value={data.pendidikan_id}
-                                    defaultValue={data.pendidikan_id}
                                     error={errors.pendidikan ? true : false}
                                     helperText={errors.pendidikan}
                                     onChange={(e) =>
@@ -205,9 +193,6 @@ export default function LaporanPenduduk() {
                                     value={
                                         data.status_hubungan_dalam_keluarga_id
                                     }
-                                    defaultValue={
-                                        data.status_hubungan_dalam_keluarga_id
-                                    }
                                     error={
                                         errors.status_hubungan_dalam_keluarga_id
                                             ? true
@@ -242,7 +227,6 @@ export default function LaporanPenduduk() {
                                     label="Status Perkawinan"
                                     name="status_perkawinan_id"
                                     value={data.status_perkawinan_id}
-                                    defaultValue={data.status_perkawinan_id}
                                     error={
                                         errors.status_perkawinan_id
                                             ? true
@@ -273,7 +257,6 @@ export default function LaporanPenduduk() {
                                     name="tanggal_awal"
                                     error={errors.tanggal_awal ? true : false}
                                     value={data.tanggal_awal}
-                                    defaultValue={data.tanggal_awal}
                                     helperText={errors.tanggal_awal}
                                     onChange={(e) =>
                                         setData({
@@ -290,7 +273,6 @@ export default function LaporanPenduduk() {
                                     name="sampai_tanggal"
                                     error={errors.sampai_tanggal ? true : false}
                                     value={data.sampai_tanggal}
-                                    defaultValue={data.sampai_tanggal}
                                     helperText={errors.sampai_tanggal}
                                     onChange={(e) =>
                                         setData({
@@ -335,6 +317,3 @@ export default function LaporanPenduduk() {
         </div>
     );
 }
-LaporanPenduduk.layout = (page) => (
-    <AppLayouts children={page} title={"Laporan Data Penduduk"} />
-);

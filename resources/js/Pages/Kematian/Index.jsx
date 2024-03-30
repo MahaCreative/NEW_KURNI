@@ -17,12 +17,14 @@ import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import PilihPenduduk from "./PilihPenduduk";
 import Form from "./Form";
+import FormExport from "./FormExport";
 
 export default function Index(props) {
     const kematian = props.kematian;
     const [modalTambah, setModalTambah] = useState(false);
     const [modalEdit, setModalEdit] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
+    const [modalExport, setModalExport] = useState(false);
     const [model, setModel] = useState(null);
     const [modalPilihPenduduk, setModalPilihPenduduk] = useState(false);
     const [modelPenduduk, setModelPenduduk] = useState(null);
@@ -184,6 +186,13 @@ export default function Index(props) {
     return (
         <div className="py-16 px-4 md:px-8 lg:px-16">
             <Modal
+                open={modalExport}
+                setOpen={setModalExport}
+                title={"Export / Cetak Laporan"}
+            >
+                <FormExport />
+            </Modal>
+            <Modal
                 open={modalDelete}
                 setOpen={setModalDelete}
                 setModel={setModel}
@@ -268,15 +277,26 @@ export default function Index(props) {
                 <h1 className="font-bold text-2xl text-orange-500 ">
                     Data Kematian
                 </h1>
-                <button
-                    onClick={() => setModalPilihPenduduk(true)}
-                    className="btn-primary"
-                >
-                    <div className="text-white text-xl font-extrabold">
-                        <Add color="inherit" fontSize="inherit" />
-                    </div>
-                    <p>Tambah</p>
-                </button>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => setModalPilihPenduduk(true)}
+                        className="btn-primary"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Add color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Tambah</p>
+                    </button>
+                    <button
+                        onClick={() => setModalExport(true)}
+                        className="btn-success"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Print color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Export / Cetak Laporan</p>
+                    </button>
+                </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-3">
                 <Card

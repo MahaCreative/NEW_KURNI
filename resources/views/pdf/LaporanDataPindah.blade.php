@@ -56,12 +56,13 @@
         td {
             font-size: 8pt;
             color: black;
+            text-align: left;
         }
 
         td,
         th {
             border: 1px solid #979797;
-            text-align: left;
+
             padding: 8px;
 
         }
@@ -94,29 +95,41 @@
             <table style="border-collapse: collapse; width:100%;">
                 <thead style="width: 100%">
                     <tr>
-                        <th>No</th>
-                        <th>NIK</th>
-                        <th>KK</th>
-                        <th>Nama Lengkap</th>
-                        <th>Jenis Kelamin</th>
-                        <th>Tempat Tanggal Lahir</th>
-                        <th>Dusun</th>
-                        <th>Pekerjaan</th>
-                        <th>Pendidikan</th>
-                        <th>Status Perkawinan</th>
-                        <th>SHDK</th>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">KK</th>
 
+                        <th rowspan="2">Nama Lengkap</th>
+                        <th rowspan="2">TTL</th>
+                        <th rowspan="2">Jenis Kelamin</th>
+                        <th rowspan="2">Agama</th>
+                        <th rowspan="2">Pekerjaan</th>
+
+                        <th colspan="3">Alamat Asal</th>
+                        <th colspan="3">Alamat Pindah</th>
+                        <th rowspan="2">Kategori Pindah</th>
+                    </tr>
+                    <tr>
+                        <td>Dusun</td>
+                        <td>RT/Rw</td>
+                        <td>Alamar</td>
+                        <td>Dusun</td>
+                        <td>RT/Rw</td>
+                        <td>Alamar</td>
                     </tr>
 
                 </thead>
                 <tbody>
-                    @if (count($penduduk) > 0)
-                        @foreach ($penduduk as $key => $item)
+
+                    @if (count($pindah) > 0)
+                        @foreach ($pindah as $key => $item)
                             <tr>
-                                <td>{{ $key++ }}</td>
-                                <td>{{ $item->nik }}</td>
+                                <td>{{ $key + 1 }}</td>
                                 <td>{{ $item->kk }}</td>
+
                                 <td>{{ $item->nama }}</td>
+                                <td>
+                                    {{ $item->tempat_lahir . ', ' . $item->tanggal_lahir }}
+                                </td>
                                 <td>
                                     @if ($item->jenis_kelamin == '1')
                                         Laki-Laki
@@ -124,14 +137,22 @@
                                         Perempuan
                                     @endif
                                 </td>
-                                <td>
-                                    {{ $item->tempat_lahir . ', ' . $item->tanggal_lahir }}
-                                </td>
-                                <td>{{ $item->detail_dusun->dusun->nama }}</td>
+                                <td>{{ $item->agama->nama }}</td>
                                 <td>{{ $item->pekerjaan->nama }}</td>
-                                <td>{{ $item->pendidikan->nama }}</td>
-                                <td>{{ $item->statusPerkawinan->nama }}</td>
-                                <td>{{ $item->statusHubunganDalamKeluarga->nama }}</td>
+
+                                <td>{{ $item->dusun_asal }}</td>
+                                <td>{{ $item->rt_asal }} / {{ $item->rw_asal }}</td>
+                                <td>{{ $item->alamat_asal }}</td>
+                                <td>{{ $item->dusun_tujuan }}</td>
+                                <td>{{ $item->rt_tujuan }} / {{ $item->rw_tujuan }}</td>
+                                <td>{{ $item->alamat_tujuan }}</td>
+                                @if ($item->kategori_pindah == 'keluar')
+                                    <td style="background: red; color:white;">{{ $item->kategori_pindah }}</td>
+                                @else
+                                    <td style="background: green; color:white;">{{ $item->kategori_pindah }}</td>
+                                @endif
+
+
 
                             </tr>
                         @endforeach

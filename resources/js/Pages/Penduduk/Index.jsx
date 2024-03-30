@@ -15,15 +15,17 @@ import React from "react";
 import { useState } from "react";
 import DataTable from "react-data-table-component";
 import Form from "./Form";
+import LaporanPenduduk from "./LaporanPenduduk";
 
 export default function Index(props) {
-    const { data: penduduk } = props.penduduk;
+    const penduduk = props.penduduk;
     const jumlahPenduduk = props.jumlahPenduduk;
     const jumlahKepalaKeluarga = props.jumlahKepalaKeluarga;
     const jumlahLakiLaki = props.jumlahLakiLaki;
     const jumlahPerempuan = props.jumlahPerempuan;
     const [model, setModel] = useState(null);
     const [modalLihat, setModalLihat] = useState(false);
+    const [modalExport, setModalExport] = useState(false);
     const [modalTambah, setModalTambah] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
     const columns = [
@@ -134,6 +136,14 @@ export default function Index(props) {
         <div className="py-16 px-4 md:px-8 lg:px-16">
             {/* Modal */}
             <div>
+                {/* Modal Export */}
+                <Modal
+                    open={modalExport}
+                    setOpen={setModalExport}
+                    title={"Export / Cetak Laporan Penduduk"}
+                >
+                    <LaporanPenduduk />
+                </Modal>
                 {/* modal delete */}
                 <Modal
                     open={modalDelete}
@@ -315,27 +325,39 @@ export default function Index(props) {
                 <h1 className="font-bold text-2xl text-orange-500 ">
                     Penduduk
                 </h1>
-                <button
-                    onClick={() => setModalTambah(true)}
-                    className="btn-primary"
-                >
-                    <div className="text-white text-xl font-extrabold">
-                        <Add color="inherit" fontSize="inherit" />
-                    </div>
-                    <p>Tambah</p>
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setModalTambah(true)}
+                        className="btn-primary"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Add color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Tambah</p>
+                    </button>
+                    <button
+                        onClick={() => setModalExport(true)}
+                        className="btn-primary"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Add color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Export / Cetak Laporan</p>
+                    </button>
+                </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-3 transition-all duration-300">
+                <Card
+                    count={jumlahPenduduk}
+                    title={"Jumlah Penduduk"}
+                    icon={<Group color="inherit" fontSize="inherit" />}
+                />
                 <Card
                     count={jumlahKepalaKeluarga.penduduk_count}
                     title={"Jumlah Kepala Keluarga"}
                     icon={<Group color="inherit" fontSize="inherit" />}
                 />
-                <Card
-                    count={jumlahPenduduk}
-                    title={"Jumlah Kepala Keluarga"}
-                    icon={<Group color="inherit" fontSize="inherit" />}
-                />
+
                 <Card
                     count={jumlahLakiLaki}
                     title={"Jumlah Laki-Laki"}

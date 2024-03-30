@@ -31,8 +31,6 @@ class Kematian extends Model
     {
         return $this->belongsTo(Pendidikan::class);
     }
-
-
     public function statusHubunganDalamKeluarga()
     {
         return $this->belongsTo(StatusHubunganDalamKeluarga::class);

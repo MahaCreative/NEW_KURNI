@@ -14,9 +14,7 @@ class PendudukController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Penduduk::query();
-
-        $penduduk = $query->with([
+        $query = Penduduk::query()->with([
             'golongan_darah',
             'pekerjaan',
             'pendidikan',
@@ -24,7 +22,18 @@ class PendudukController extends Controller
             'statusPerkawinan', 'agama', 'detail_dusun' => function ($q) {
                 $q->with('dusun');
             }
-        ])->paginate(50);
+        ]);
+
+
+        $roles = $request->user()->getRoleNames()[0];
+        // dd($roles == 'kepala desa' or $roles == 'sekretaris desa');
+        if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+            $penduduk = $query->get();
+        } else {
+            $penduduk = $query->whereHas('detail_dusun.dusun', function ($q) use ($roles) {
+                $q->where('nama', '=', $roles);
+            })->get();
+        }
         $jumlahPenduduk = Penduduk::count();
         $jumlahKepalaKeluarga = StatusHubunganDalamKeluarga::withCount('penduduk')->where('nama', 'kepala keluarga')->first();
         $jumlahLakiLaki = Penduduk::where('jenis_kelamin', '=', 1)->count();
@@ -97,104 +106,20 @@ class PendudukController extends Controller
         return redirect()->back();
     }
 
-    public function cetak_penduduk(Request $request)
-    {
-        return inertia('Cetak-penduduk');
-    }
+
     public function store_cetak_penduduk(Request $request)
     {
-        $query = Penduduk::query();
-        $query->with(['detail_dusun' => function ($q) {
-            $q->with('dusun');
-        }, 'golongan_darah']);
-        if ($request->dusun_id) {
-            $query->whereHas('detail_dusun', function ($query) use ($request) {
-                $query->where('dusun_id', $request->dusun_id);
-            });
-        }
 
-        if ($request->darah_id) {
-            $query->where('darah_id', '=', $request->darah_id);
-        }
-        if ($request->agama_id) {
-            $query->where('agama_id', '=', $request->agama_id);
-        }
-        if ($request->pendidikan_id) {
-            $query->where('pendidikan_id', '=', $request->pendidikan_id);
-        }
-        if ($request->pekerjaan_id) {
-            $query->where('pekerjaan_id', '=', $request->pekerjaan_id);
-        }
-        if ($request->status_hubungan_dalam_keluarga_id) {
-            $query->where('status_hubungan_dalam_keluarga_id', '=', $request->status_hubungan_dalam_keluarga_id);
-        }
-        if ($request->status_perkawinan_id) {
-            $query->where('status_perkawinan_id', '=', $request->status_perkawinan_id);
-        }
-
-        if ($request->tanggal_awal) {
-            $query->where('created_at', '>=', $request->tanggal_awal);
-        }
-        if ($request->sampai_tanggal) {
-            $query->where('created_at', '<=', $request->sampai_tanggal);
-        }
-
-        $penduduk = $query->get();
+        $penduduk = $this->get_data($request);
         $desa = Desa::first();
         // return $penduduk;
         return view('pdf.LaporanPenduduk', compact('penduduk', 'desa'));
     }
-    public function laporan_penduduk(Request $request)
-    {
-        return inertia('Penduduk/LaporanPenduduk');
-    }
+
     public function store_laporan_penduduk(Request $request)
     {
-        // dd($request->all());
-        $query = Penduduk::query();
-        $query->with([
-            'detail_dusun' => function ($q) {
-                $q->with('dusun');
-            }, 'golongan_darah',
-            'pekerjaan',
-            'agama',
-            'pendidikan',
-            'statusHubunganDalamKeluarga',
-            'statusPerkawinan',
-        ]);
-        if ($request->dusun_id) {
-            $query->whereHas('detail_dusun', function ($query) use ($request) {
-                $query->where('dusun_id', $request->dusun_id);
-            });
-        }
 
-        if ($request->darah_id) {
-            $query->where('darah_id', '=', $request->darah_id);
-        }
-        if ($request->agama_id) {
-            $query->where('agama_id', '=', $request->agama_id);
-        }
-        if ($request->pendidikan_id) {
-            $query->where('pendidikan_id', '=', $request->pendidikan_id);
-        }
-        if ($request->pekerjaan_id) {
-            $query->where('pekerjaan_id', '=', $request->pekerjaan_id);
-        }
-        if ($request->status_hubungan_dalam_keluarga_id) {
-            $query->where('status_hubungan_dalam_keluarga_id', '=', $request->status_hubungan_dalam_keluarga_id);
-        }
-        if ($request->status_perkawinan_id) {
-            $query->where('status_perkawinan_id', '=', $request->status_perkawinan_id);
-        }
-
-        if ($request->tanggal_awal) {
-            $query->where('created_at', '>=', $request->tanggal_awal);
-        }
-        if ($request->sampai_tanggal) {
-            $query->where('created_at', '<=', $request->sampai_tanggal);
-        }
-
-        $penduduk = $query->get();
+        $penduduk = $this->get_data($request);
         $desa = Desa::first();
         $pdf = Pdf::loadView('pdf.LaporanPenduduk', ['desa' => $desa, 'penduduk' => $penduduk])->setPaper('F4', 'landscape');
         $pdfPath = 'PDF/Penduduk/LaporanPenduduk.pdf';
@@ -207,5 +132,56 @@ class PendudukController extends Controller
         } else {
             abort(404, 'File not found');
         }
+    }
+
+    public function get_data($request)
+    {
+        $query = Penduduk::query();
+
+        $query->with(['detail_dusun' => function ($q) {
+            $q->with('dusun');
+        }, 'golongan_darah']);
+        // cek roles nya
+        $roles = $request->user()->getRoleNames()[0];
+        if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+
+            if ($request->dusun_id) {
+                $query->whereHas('detail_dusun', function ($query) use ($request) {
+                    $query->where('dusun_id', '=', $request->dusun_id);
+                });
+            }
+        } else {
+            $query->whereHas('detail_dusun.dusun', function ($query) use ($roles) {
+                $query->where('nama', $roles);
+            });
+        }
+
+        if ($request->darah_id) {
+            $query->where('darah_id', '=', $request->darah_id);
+        }
+        if ($request->agama_id) {
+            $query->where('agama_id', '=', $request->agama_id);
+        }
+        if ($request->pendidikan_id) {
+            $query->where('pendidikan_id', '=', $request->pendidikan_id);
+        }
+        if ($request->pekerjaan_id) {
+            $query->where('pekerjaan_id', '=', $request->pekerjaan_id);
+        }
+        if ($request->status_hubungan_dalam_keluarga_id) {
+            $query->where('status_hubungan_dalam_keluarga_id', '=', $request->status_hubungan_dalam_keluarga_id);
+        }
+        if ($request->status_perkawinan_id) {
+            $query->where('status_perkawinan_id', '=', $request->status_perkawinan_id);
+        }
+
+        if ($request->tanggal_awal) {
+            $query->where('created_at', '>=', $request->tanggal_awal);
+        }
+        if ($request->sampai_tanggal) {
+            $query->where('created_at', '<=', $request->sampai_tanggal);
+        }
+        $penduduk = $query->get();
+        return $penduduk;
     }
 }

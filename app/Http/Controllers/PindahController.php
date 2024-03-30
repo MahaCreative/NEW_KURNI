@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Desa;
 use App\Models\DetailDusun;
 use App\Models\Dusun;
 use App\Models\Penduduk;
 use App\Models\PengikutPindah;
 use App\Models\Pindah;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +18,14 @@ class PindahController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pindah::query();
-        $pindah = $query->with(['pengikut'])->paginate();
+        $query = Pindah::query()->with(['pengikut']);
+        $roles = $request->user()->getRoleNames()[0];
+        if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+            $pindah = $query->get();
+        } else {
+            $pindah = $query->where('dusun_asal', '=', $roles)
+                ->orWhere('dusun_tujuan', '=', $roles)->get();
+        }
         $pindahMasuk = Pindah::where('kategori_pindah', 'masuk')->count();
         $pindahKeluar = Pindah::where('kategori_pindah', 'keluar')->count();
 
@@ -223,6 +231,84 @@ class PindahController extends Controller
             $q->with('statusHubunganDalamKeluarga');
         }, 'pekerjaan', 'pendidikan', 'statusPerkawinan', 'agama'])->first();
         return inertia('Pindah/CetakSuket', compact('pindah'));
+    }
+
+    public function export_laporan(Request $request)
+    {
+        $pindah = $this->get_data($request);
+        $desa = Desa::first();
+        $pdf = Pdf::loadView('pdf.LaporanDataPindah', ['desa' => $desa, 'pindah' => $pindah])->setPaper('F4', 'landscape');
+        $pdfPath = 'PDF/Penduduk/LaporanPindah.pdf';
+        \Storage::put($pdfPath, $pdf->output());
+        $path = public_path("storage/" . $pdfPath);
+        if (file_exists($path)) {
+            $headers = ['Content-Type: application/pdf'];
+            // dd($path);
+            return response()->download($path, 'LaporanPindah.pdf', $headers);
+        } else {
+            abort(404, 'File not found');
+        }
+    }
+    public function cetak_laporan(Request $request)
+    {
+        $pindah = $this->get_data($request);
+        $desa = Desa::first();
+        return view('pdf.LaporanDataPindah', compact('pindah', 'desa'));
+    }
+    public function get_data($request)
+    {
+        $query = Pindah::query()->with([
+            'detail_dusun' => function ($q) {
+                $q->with('dusun');
+            },
+            'pengikut',
+            'pekerjaan',
+            'pendidikan',
+        ]);
+
+        if ($request->tanggal_awal) {
+            $query->where('tgl_kematian', '>=', $request->tanggal_awal);
+        }
+        if ($request->sampai_tanggal) {
+            $query->where('tgl_kematian', '<=', $request->sampai_tanggal);
+        }
+
+        $roles = $request->user()->getRoleNames()[0];
+        if ($request->kategori == 'masuk') {
+            $query->where('kategori_pindah', '=', $request->kategori);
+            if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+                if ($request->dusun_asal) {
+                    $query->where('dusun_tujuan', '=', $request->dusun_asal);
+                }
+            } else {
+                $query->where('dusun_tujuan', '=', $roles);
+            }
+        } else if ($request->kategori == 'keluar') {
+            $query->where('kategori_pindah', '=', $request->kategori);
+            if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+                if ($request->dusun_asal) {
+                    $query->where('dusun_asal', '=', $request->dusun_asal);
+                }
+            } else {
+
+                $query->where('dusun_asal', '=', $roles);
+            }
+        } else {
+
+            if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
+                if ($request->dusun_asal) {
+                    $query->where('dusun_asal', '=', $request->dusun_asal)
+                        ->orWhere('dusun_tujuan', '=', $request->dusun_asal);
+                }
+            } else {
+                $query->where('dusun_asal', '=', $roles)
+                    ->orWhere('dusun_tujuan', '=', $roles);
+            }
+        }
+        $roles = $request->user()->getRoleNames()[0];
+        $pindah = $query->orderBy("kategori_pindah", "asc")->get();
+
+        return $pindah;
     }
 
 

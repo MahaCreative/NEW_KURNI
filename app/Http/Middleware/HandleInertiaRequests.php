@@ -46,11 +46,16 @@ class HandleInertiaRequests extends Middleware
             'dusun' => Dusun::with('detail_dusun')->get(),
             'agama' => Agama::all(),
             'darah' => Darah::all(),
+            'flash' => [
+                'type' => $request->session()->get('type'),
+                'message' => $request->session()->get('message')
+            ],
             'status_hubungan_dalam_keluarga' => StatusHubunganDalamKeluarga::all(),
             'status_perkawinan' => StatusPerkawinan::all(),
             'pekerjaan' => Pekerjaan::all(),
             'auth' => [
                 'user' => $request->user(),
+                'roles' => $request->user() ? $request->user()->getRoleNames()[0] : []
             ],
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),

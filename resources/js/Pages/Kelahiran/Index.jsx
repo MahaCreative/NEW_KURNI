@@ -18,14 +18,16 @@ import Form from "./Form";
 import { MenuItem, Select, Tooltip } from "@mui/material";
 import { Link, router } from "@inertiajs/react";
 import PilihPenduduk from "./PilihPenduduk";
+import FormExport from "./FormExport";
 
 export default function Index(props) {
     const [modalTambah, setModalTambah] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
     const [modalPilihPenduduk, setModalPilihPenduduk] = useState(false);
     const [modalPertanyaan, setModalPertanyaan] = useState(false);
+    const [modalExport, setModalExport] = useState(false);
     const [model, setModel] = useState(null);
-    const { data: kelahiran } = props.kelahiran;
+    const kelahiran = props.kelahiran;
     const [dataAyah, setDataAyah] = useState([]);
     const [dataIbu, setDataIbu] = useState([]);
     const columns = [
@@ -126,6 +128,12 @@ export default function Index(props) {
             wrap: true,
         },
         {
+            name: "Warga Dusun",
+            selector: (row) => row.detail_dusun.dusun.nama,
+            width: "110px",
+            wrap: true,
+        },
+        {
             name: "Konfirmasi Permintaan",
             selector: (row) => (
                 <Select
@@ -192,8 +200,17 @@ export default function Index(props) {
             setModalPilihPenduduk(true);
         }, 150);
     };
+    console.log(kelahiran);
     return (
         <div className="py-16 px-4 md:px-8 lg:px-16">
+            {/* Modal Export */}
+            <Modal
+                open={modalExport}
+                setOpen={setModalExport}
+                title={"Export / Cetak Laporan"}
+            >
+                <FormExport />
+            </Modal>
             {/* modal delete */}
             <Modal
                 open={modalDelete}
@@ -305,15 +322,26 @@ export default function Index(props) {
                 <h1 className="font-bold text-2xl text-orange-500 ">
                     Data Kelahiran
                 </h1>
-                <button
-                    onClick={() => setModalPilihPenduduk(true)}
-                    className="btn-primary"
-                >
-                    <div className="text-white text-xl font-extrabold">
-                        <Add color="inherit" fontSize="inherit" />
-                    </div>
-                    <p>Tambah</p>
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setModalPilihPenduduk(true)}
+                        className="btn-primary"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Add color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Tambah</p>
+                    </button>
+                    <button
+                        onClick={() => setModalExport(true)}
+                        className="btn-success"
+                    >
+                        <div className="text-white text-xl font-extrabold">
+                            <Print color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Export / Cetak Laporan</p>
+                    </button>
+                </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-3">
                 <Card

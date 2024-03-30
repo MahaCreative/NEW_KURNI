@@ -76,7 +76,7 @@ export default function PilihPenduduk({ ...props }) {
         props.lanjut();
     };
     return (
-        <div className="max-w-[90vw]">
+        <div className="max-w-[90vw] max-h-[80vh] overflow-y-auto">
             <p className="my-6">
                 Silahkan melakukan pencarian data penduduk, menggunakan salah
                 satu data berikut{" "}
@@ -90,8 +90,8 @@ export default function PilihPenduduk({ ...props }) {
                 onChange={(e) => setParams({ ...params, q: e.target.value })}
             />
 
-            <div className="my-6 flex gap-3">
-                <DataTable data={data} columns={columns} />
+            <div className="my-6 ">
+                <DataTable data={data} columns={columns} pagination />
             </div>
 
             <div className="my-6 flex gap-4">

@@ -27,6 +27,7 @@
         "@mui/x-data-grid": "^6.19.8",
         "highcharts-react-official": "^3.2.1",
         "react-data-table-component": "^7.6.2",
+        "react-hot-toast": "^2.4.1",
         "react-select": "^5.8.0"
     }
 }

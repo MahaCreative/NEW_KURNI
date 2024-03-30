@@ -1,4 +1,4 @@
-import { router, useForm, usePage } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import { FormControl } from "@mui/base";
 import { Cancel, PictureAsPdfOutlined, Print } from "@mui/icons-material";
 import { MenuItem, TextField } from "@mui/material";
@@ -12,10 +12,9 @@ export default function FormExport() {
         sampai_tanggal: "",
     });
     const { dusun } = usePage().props;
-    const { auth } = usePage().props;
     const exportHandler = () => {
         axios
-            .get(route("export.laporan.data-kartu-keluarga"), {
+            .get(route("export.laporan-kelahiran"), {
                 responseType: "arraybuffer", // Tentukan tipe respons sebagai arraybuffer
                 params: data,
             })
@@ -26,18 +25,16 @@ export default function FormExport() {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute(
-                    "download",
-                    "Laporan-data-kartu-keluarga.pdf"
-                );
+                link.setAttribute("download", "Laporan-data-kelahiran.pdf");
                 document.body.appendChild(link);
                 link.click();
             })
             .catch((error) => console.error("error downloading PDF:", error));
     };
     const cetakHandler = () => {
-        window.open(route("cetak.laporan.data-kartu-keluarga", data));
+        window.open(route("cetak.laporan-kelahiran", data));
     };
+
     return (
         <div className="w-[90vw] md:w-[50vw] flex-col flex">
             <FormControl className="w-full" fullWidth>
@@ -59,20 +56,11 @@ export default function FormExport() {
                     }
                 >
                     <MenuItem value="">Pilih Dusun</MenuItem>
-                    {dusun.map((item, key) =>
-                        auth.roles == "sekretaris desa" ||
-                        auth.roles == "kepala desa" ? (
-                            <MenuItem key={key} value={item.id}>
-                                {item.nama}
-                            </MenuItem>
-                        ) : (
-                            auth.roles == item.nama && (
-                                <MenuItem key={key} value={item.id}>
-                                    {item.nama}
-                                </MenuItem>
-                            )
-                        )
-                    )}
+                    {dusun.map((item, key) => (
+                        <MenuItem key={key} value={item.id}>
+                            {item.nama}
+                        </MenuItem>
+                    ))}
                 </TextField>
             </FormControl>
             <FormControl fullWidth>

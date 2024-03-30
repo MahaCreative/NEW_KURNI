@@ -7,15 +7,15 @@ import React from "react";
 
 export default function FormExport() {
     const { data, setData, post, reset, errors } = useForm({
-        dusun_id: "",
+        dusun_asal: "",
         tanggal_awal: "",
         sampai_tanggal: "",
+        kategori: "",
     });
     const { dusun } = usePage().props;
-    const { auth } = usePage().props;
     const exportHandler = () => {
         axios
-            .get(route("export.laporan.data-kartu-keluarga"), {
+            .get(route("export.laporan-pindah"), {
                 responseType: "arraybuffer", // Tentukan tipe respons sebagai arraybuffer
                 params: data,
             })
@@ -26,31 +26,51 @@ export default function FormExport() {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute(
-                    "download",
-                    "Laporan-data-kartu-keluarga.pdf"
-                );
+                link.setAttribute("download", "Laporan-data-pindah.pdf");
                 document.body.appendChild(link);
                 link.click();
             })
             .catch((error) => console.error("error downloading PDF:", error));
     };
     const cetakHandler = () => {
-        window.open(route("cetak.laporan.data-kartu-keluarga", data));
+        window.open(route("cetak.laporan-pindah", data));
     };
+    console.log(data.dusun_asal);
     return (
-        <div className="w-[90vw] md:w-[50vw] flex-col flex">
+        <div className="w-[90vw] md:w-[50vw] flex-col flex gap-4">
             <FormControl className="w-full" fullWidth>
                 <TextField
                     className="w-full"
                     id="outlined-select-currency"
                     select
-                    label="Dusun"
-                    name="dusun_id"
-                    error={errors.dusun_id ? true : false}
-                    helperText={errors.dusun_id}
-                    value={data.dusun_id}
-                    defaultValue={data.dusun_id}
+                    label="Kategori Pindah"
+                    name="kategori"
+                    error={errors.kategori ? true : false}
+                    helperText={errors.kategori}
+                    value={data.kategori}
+                    onChange={(e) =>
+                        setData({
+                            ...data,
+                            [e.target.name]: e.target.value,
+                        })
+                    }
+                >
+                    <MenuItem value="">Pilih Kategori Pindahan</MenuItem>
+                    <MenuItem value={"masuk"}>Pindah Masuk</MenuItem>
+                    <MenuItem value={"keluar"}>Pindah Keluar</MenuItem>
+                </TextField>
+            </FormControl>
+
+            <FormControl className="w-full" fullWidth>
+                <TextField
+                    className="w-full"
+                    id="outlined-select-currency"
+                    select
+                    label="Dusun Asal"
+                    name="dusun_asal"
+                    error={errors.dusun_asal ? true : false}
+                    helperText={errors.dusun_asal}
+                    value={data.dusun_asal}
                     onChange={(e) =>
                         setData({
                             ...data,
@@ -59,22 +79,14 @@ export default function FormExport() {
                     }
                 >
                     <MenuItem value="">Pilih Dusun</MenuItem>
-                    {dusun.map((item, key) =>
-                        auth.roles == "sekretaris desa" ||
-                        auth.roles == "kepala desa" ? (
-                            <MenuItem key={key} value={item.id}>
-                                {item.nama}
-                            </MenuItem>
-                        ) : (
-                            auth.roles == item.nama && (
-                                <MenuItem key={key} value={item.id}>
-                                    {item.nama}
-                                </MenuItem>
-                            )
-                        )
-                    )}
+                    {dusun.map((item, key) => (
+                        <MenuItem key={key} value={item.nama}>
+                            {item.nama}
+                        </MenuItem>
+                    ))}
                 </TextField>
             </FormControl>
+
             <FormControl fullWidth>
                 <label htmlFor="">Dari Tanggal</label>
                 <TextField
@@ -83,7 +95,6 @@ export default function FormExport() {
                     name="tanggal_awal"
                     error={errors.tanggal_awal ? true : false}
                     value={data.tanggal_awal}
-                    defaultValue={data.tanggal_awal}
                     helperText={errors.tanggal_awal}
                     onChange={(e) =>
                         setData({
@@ -101,7 +112,6 @@ export default function FormExport() {
                     name="sampai_tanggal"
                     error={errors.sampai_tanggal ? true : false}
                     value={data.sampai_tanggal}
-                    defaultValue={data.sampai_tanggal}
                     helperText={errors.sampai_tanggal}
                     onChange={(e) =>
                         setData({

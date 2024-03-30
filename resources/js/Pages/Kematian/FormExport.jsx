@@ -10,12 +10,12 @@ export default function FormExport() {
         dusun_id: "",
         tanggal_awal: "",
         sampai_tanggal: "",
+        sebab_kematian: "",
     });
     const { dusun } = usePage().props;
-    const { auth } = usePage().props;
     const exportHandler = () => {
         axios
-            .get(route("export.laporan.data-kartu-keluarga"), {
+            .get(route("export.laporan-kematian"), {
                 responseType: "arraybuffer", // Tentukan tipe respons sebagai arraybuffer
                 params: data,
             })
@@ -26,20 +26,18 @@ export default function FormExport() {
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute(
-                    "download",
-                    "Laporan-data-kartu-keluarga.pdf"
-                );
+                link.setAttribute("download", "Laporan-data-kematian.pdf");
                 document.body.appendChild(link);
                 link.click();
             })
             .catch((error) => console.error("error downloading PDF:", error));
     };
     const cetakHandler = () => {
-        window.open(route("cetak.laporan.data-kartu-keluarga", data));
+        window.open(route("cetak.laporan-kematian", data));
     };
+
     return (
-        <div className="w-[90vw] md:w-[50vw] flex-col flex">
+        <div className="w-[90vw] md:w-[50vw] flex-col flex gap-4">
             <FormControl className="w-full" fullWidth>
                 <TextField
                     className="w-full"
@@ -59,20 +57,40 @@ export default function FormExport() {
                     }
                 >
                     <MenuItem value="">Pilih Dusun</MenuItem>
-                    {dusun.map((item, key) =>
-                        auth.roles == "sekretaris desa" ||
-                        auth.roles == "kepala desa" ? (
-                            <MenuItem key={key} value={item.id}>
-                                {item.nama}
-                            </MenuItem>
-                        ) : (
-                            auth.roles == item.nama && (
-                                <MenuItem key={key} value={item.id}>
-                                    {item.nama}
-                                </MenuItem>
-                            )
-                        )
-                    )}
+                    {dusun.map((item, key) => (
+                        <MenuItem key={key} value={item.id}>
+                            {item.nama}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            </FormControl>
+            <FormControl className="w-full" fullWidth>
+                <TextField
+                    className="w-full"
+                    id="outlined-select-currency"
+                    select
+                    label="Sebab Kematian"
+                    name="sebab_kematian"
+                    error={errors.sebab_kematian ? true : false}
+                    helperText={errors.sebab_kematian}
+                    value={data.sebab_kematian}
+                    defaultValue={data.sebab_kematian}
+                    onChange={(e) =>
+                        setData({
+                            ...data,
+                            [e.target.name]: e.target.value,
+                        })
+                    }
+                >
+                    <MenuItem value="">Pilih Sebab Kematian</MenuItem>
+                    <MenuItem value={"sakit biasa / tua"}>
+                        Sakit Biasa / Tua
+                    </MenuItem>
+                    <MenuItem value={"wabah penyakit"}>Wabah Penyakit</MenuItem>
+                    <MenuItem value={"kecelakaan"}>Kecelakaan</MenuItem>
+                    <MenuItem value={"kriminalitas"}>Kriminalitas</MenuItem>
+                    <MenuItem value={"bunuh diri"}>Bunuh Diri</MenuItem>
+                    <MenuItem value={"lainnya"}>Lainnya</MenuItem>
                 </TextField>
             </FormControl>
             <FormControl fullWidth>

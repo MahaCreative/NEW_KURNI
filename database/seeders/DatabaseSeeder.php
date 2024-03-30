@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Dusun;
 use App\Models\Kelahiran;
 use App\Models\Kematian;
 use App\Models\Penduduk;
@@ -23,13 +24,17 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        $user = User::factory()->create([
-            'name' => 'test',
+        $user = User::create([
             'email' => 'test@example.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+            'name' => 'Kepala Desa',
+            'alamat' => 'Jl Diponegoro Kelurahan Karema',
+            'telp' => '082194255799',
+            'jabatan' => 'Kepala Desa',
         ]);
         $role = Role::create(['name' => 'kepala desa', 'guard_name' => 'web']);
-        $user->assignRole($role->name);
+        $role = Role::create(['name' => 'sekretaris desa', 'guard_name' => 'web']);
+        $user->assignRole('kepala desa');
         $this->call(
             [
                 DesaSeeder::class,
@@ -46,6 +51,10 @@ class DatabaseSeeder extends Seeder
         Penduduk::factory(500)->create();
         Kematian::factory(1)->create();
         Pindah::factory(335)->hasPengikut(3)->create();
+        $dusun = Dusun::all();
+        foreach ($dusun as $item) {
+            Role::create(['name' => $item->nama, 'guard_name' => 'web']);
+        }
         // Kelahiran::factory(1)->create();
     }
 }

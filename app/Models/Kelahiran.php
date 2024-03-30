@@ -25,4 +25,9 @@ class Kelahiran extends Model
     {
         return $this->belongsTo(Penduduk::class, 'ibu_id');
     }
+
+    public function detail_dusun()
+    {
+        return $this->belongsTo(DetailDusun::class);
+    }
 }

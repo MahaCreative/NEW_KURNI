@@ -56,12 +56,13 @@
         td {
             font-size: 8pt;
             color: black;
+            text-align: left;
         }
 
         td,
         th {
             border: 1px solid #979797;
-            text-align: left;
+
             padding: 8px;
 
         }
@@ -95,28 +96,33 @@
                 <thead style="width: 100%">
                     <tr>
                         <th>No</th>
-                        <th>NIK</th>
                         <th>KK</th>
+                        <th>NIK</th>
                         <th>Nama Lengkap</th>
+                        <th>TTL</th>
                         <th>Jenis Kelamin</th>
-                        <th>Tempat Tanggal Lahir</th>
                         <th>Dusun</th>
+                        <th>Alamat</th>
+                        <th>Agama</th>
                         <th>Pekerjaan</th>
-                        <th>Pendidikan</th>
-                        <th>Status Perkawinan</th>
-                        <th>SHDK</th>
-
+                        <th>Shdk</th>
+                        <th>Status Kawin</th>
+                        <th>Tanggal Kematian</th>
+                        <th>Sebab Kematian</th>
                     </tr>
+
 
                 </thead>
                 <tbody>
-                    @if (count($penduduk) > 0)
-                        @foreach ($penduduk as $key => $item)
+
+                    @if (count($kematian) > 0)
+                        @foreach ($kematian as $key => $item)
                             <tr>
-                                <td>{{ $key++ }}</td>
-                                <td>{{ $item->nik }}</td>
+                                <td>{{ $key + 1 }}</td>
                                 <td>{{ $item->kk }}</td>
+                                <td>{{ $item->nik }}</td>
                                 <td>{{ $item->nama }}</td>
+                                <td>{{ $item->tempat_lahir }} {{ $item->tanggal_lahir }}</td>
                                 <td>
                                     @if ($item->jenis_kelamin == '1')
                                         Laki-Laki
@@ -124,15 +130,14 @@
                                         Perempuan
                                     @endif
                                 </td>
-                                <td>
-                                    {{ $item->tempat_lahir . ', ' . $item->tanggal_lahir }}
-                                </td>
                                 <td>{{ $item->detail_dusun->dusun->nama }}</td>
+                                <td>{{ $item->alamat }}</td>
+                                <td>{{ $item->agama->nama }}</td>
                                 <td>{{ $item->pekerjaan->nama }}</td>
-                                <td>{{ $item->pendidikan->nama }}</td>
-                                <td>{{ $item->statusPerkawinan->nama }}</td>
                                 <td>{{ $item->statusHubunganDalamKeluarga->nama }}</td>
-
+                                <td>{{ $item->statusPerkawinan->nama }}</td>
+                                <td>{{ $item->hari_kematian }}, {{ $item->tgl_kematian }}</td>
+                                <td>{{ $item->sebab_kematian }}</td>
                             </tr>
                         @endforeach
                     @else

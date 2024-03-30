@@ -53,7 +53,7 @@ export default function Form({ model, setModel, setOpen, dataAyah, dataIbu }) {
     }, [model]);
     const { agama } = usePage().props;
     const { darah } = usePage().props;
-
+    console.log(dataIbu);
     const submitHandler = (e) => {
         e.preventDefault();
         post(route("post.kelahiran"), {

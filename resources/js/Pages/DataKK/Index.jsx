@@ -113,7 +113,7 @@ export default function Index(props) {
         },
         series: [
             {
-                name: "Brands",
+                name: "Total Penduduk",
                 colorByPoint: true,
                 shadow: 1,
                 border: 1,
@@ -166,7 +166,7 @@ export default function Index(props) {
                     format: "{point.name}: {point.y:f}",
                 },
             },
-            pie: {
+            column: {
                 allowPointSelect: true,
                 cursor: "pointer",
                 showInLegend: true,
@@ -181,7 +181,7 @@ export default function Index(props) {
         },
         series: [
             {
-                name: "Brands",
+                name: "Total",
                 colorByPoint: true,
                 shadow: 1,
                 border: 1,
