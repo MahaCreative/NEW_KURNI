@@ -17,18 +17,18 @@ export default function Card({
             <div className="flex justify-between w-full items-center px-3">
                 <div>
                     <p
-                        className={`${textPrimary} font-bold text-base md:text-xl lg:text-3xl transisi`}
+                        className={`${textPrimary} font-bold text-xs md:text-lg lg:text-2xl transisi`}
                     >
                         {count}
                     </p>
                     <div
-                        className={`font-extralight ${textPrimary} text-xs md:text-base  lg:text-md transisi`}
+                        className={`font-extralight ${textPrimary} text-xs  lg:text-sm transisi`}
                     >
                         {title}
                     </div>
                 </div>
                 <div
-                    className={`${textSecondary} text-xl md:text-3xl lg:text-5xl transisi p-2 bg-orange-500 rounded-full `}
+                    className={`${textSecondary} text-md md:text-xl lg:text-3xl transisi p-2 bg-orange-500 rounded-full `}
                 >
                     {icon}
                 </div>

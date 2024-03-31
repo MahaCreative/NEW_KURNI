@@ -44,11 +44,14 @@ export default function AppLayouts({ children, title, deskription }) {
         setTimeout(() => {
             if (flash.type == "success") {
                 setAudioSrc("Audio/success.mp3");
+                if (audioSrc && audioRef.current) {
+                    audioRef.current.play(); // Memulai pemutaran audio
+                }
             } else {
                 setAudioSrc("Audio/errors.mp3");
-            }
-            if (audioSrc && audioRef.current) {
-                audioRef.current.play(); // Memulai pemutaran audio
+                if (audioSrc && audioRef.current) {
+                    audioRef.current.play(); // Memulai pemutaran audio
+                }
             }
         }, 350);
         return () => {
@@ -58,11 +61,14 @@ export default function AppLayouts({ children, title, deskription }) {
             }
         };
     }, [flash]);
-    console.log(auth);
+    console.log(flash);
     return (
-        <div className="font-fira tracking-tighter leading-tight min-h-screen overflow-x-hidden bg-orange-500 relative">
+        <div className="font-fira tracking-tighter leading-tight min-h-screen overflow-x-hidden bg-orange-500 relative text-xs">
             <Toaster />
-            <audio preload="auto" ref={audioRef} src={audioSrc} />
+            {flash.type !== null && (
+                <audio preload="auto" ref={audioRef} src={audioSrc} />
+            )}
+
             <Head title={title} />
 
             <div className="">

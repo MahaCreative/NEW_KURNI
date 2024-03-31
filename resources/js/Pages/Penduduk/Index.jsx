@@ -133,7 +133,7 @@ export default function Index(props) {
     };
 
     return (
-        <div className="py-16 px-4 md:px-8 lg:px-16">
+        <div className="py-6 px-4 md:px-8 lg:px-16">
             {/* Modal */}
             <div>
                 {/* Modal Export */}

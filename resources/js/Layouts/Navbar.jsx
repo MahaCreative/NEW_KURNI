@@ -65,14 +65,14 @@ export default function Navbar({ open, setOpen }) {
                                 >
                                     <div className="bg-white text-slate-950 px-3 py-2 rounded-md absolute z-[999999]">
                                         <Link
-                                            className="hover:cursor-pointer hover:text-white hover:bg-orange-600 block px-2 py-2 rounded-md"
+                                            className="text-base hover:cursor-pointer hover:text-white hover:bg-orange-600 block px-2 py-2 rounded-md"
                                             as="div"
                                         >
                                             Setting profile
                                         </Link>
                                         <Link
                                             href={route("logout")}
-                                            className="hover:cursor-pointer hover:text-white hover:bg-orange-600 block px-2 py-2 rounded-md"
+                                            className="text-base hover:cursor-pointer hover:text-white hover:bg-orange-600 block px-2 py-2 rounded-md"
                                         >
                                             Logout
                                         </Link>

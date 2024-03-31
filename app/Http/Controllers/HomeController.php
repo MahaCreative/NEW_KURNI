@@ -8,6 +8,6 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        return inertia("User/Home/Index");
+        return inertia("Pengguna/Home/Index");
     }
 }

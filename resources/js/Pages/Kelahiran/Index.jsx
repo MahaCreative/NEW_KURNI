@@ -202,7 +202,7 @@ export default function Index(props) {
     };
     console.log(kelahiran);
     return (
-        <div className="py-16 px-4 md:px-8 lg:px-16">
+        <div className="py-8 px-4 md:px-8 lg:px-16">
             {/* Modal Export */}
             <Modal
                 open={modalExport}

@@ -96,14 +96,14 @@ class PendudukController extends Controller
             'alamat'                            => ['nullable', 'string', 'max:191'],
         ]);
         $penduduk->update($attr);
-        return redirect()->back();
+        return redirect()->back()->with(['type' => 'success', 'message' => 'berhasil mengubah data penduduk ' . $nama]);
     }
     public function delete(Request $request)
     {
         $penduduk = Penduduk::findOrFail($request->id);
         $nama = $penduduk->nama;
         $penduduk->delete();
-        return redirect()->back();
+        return redirect()->back()->with(['type' => 'success', 'message' => 'berhasil menghapus data penduduk ' . $nama]);
     }
 
 

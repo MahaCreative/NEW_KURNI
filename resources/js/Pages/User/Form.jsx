@@ -72,7 +72,7 @@ export default function Form({ model, setModel, setOpen }) {
         });
     };
     return (
-        <div className="w-[80vw] md:w-[50vw]">
+        <div className="w-[80vw] md:w-[50vw] max-h-[80vh] overflow-y-auto">
             <form
                 action=""
                 className=""

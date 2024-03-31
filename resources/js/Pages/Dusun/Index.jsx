@@ -68,7 +68,7 @@ export default function Index(props) {
     };
 
     return (
-        <div className="px-4 md:px-8 lg:px-16 transisi py-16">
+        <div className="px-4 md:px-8 lg:px-16 transisi py-8">
             {/* Modal */}
             <div>
                 <Modal
