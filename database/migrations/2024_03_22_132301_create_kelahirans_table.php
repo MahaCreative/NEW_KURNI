@@ -34,6 +34,10 @@ return new class extends Migration
             $table->string('tempat_dilahirkan')->nullable();
             $table->string('status_permintaan')->default('menunggu_konfirmasi');
             $table->foreignId('detail_dusun_id')->references('id')->on('detail_dusuns')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('foto_kk')->nullable();
+            $table->string('foto_ktp_ibu')->nullable();
+            $table->string('foto_ktp_ayah')->nullable();
+            $table->string('surat_keterangan_lahir')->nullable();
             $table->timestamps();
         });
     }

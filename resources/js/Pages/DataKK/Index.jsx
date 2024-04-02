@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import Modal from "@/Components/Modal";
 import FormExport from "./FormExport";
+import Search from "@/Components/Search";
 HighchartsExporting(Highcharts);
 // Aktifkan modul aksesibilitas jika diperlukan
 HighchartsAccessibility(Highcharts);
@@ -203,19 +204,22 @@ export default function Index(props) {
             >
                 <FormExport />
             </Modal>
-            <div className="bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
-                <h1 className="font-bold text-2xl text-orange-500 ">
-                    Data Kartu Keluarga
-                </h1>
-                <button
-                    onClick={() => setModalForm(true)}
-                    className="btn-primary"
-                >
-                    <div className="text-white text-xl font-extrabold">
-                        <Print color="inherit" fontSize="inherit" />
-                    </div>
-                    <p>Export / Cetak</p>
-                </button>
+            <div className="flex flex-col md:flex-row bg-white py-2 px-4 rounded-md justify-between gap-5 items-center">
+                <div className="w-full bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
+                    <h1 className="font-bold text-2xl text-orange-500 ">
+                        Data Kartu Keluarga
+                    </h1>
+                    <button
+                        onClick={() => setModalForm(true)}
+                        className="btn-primary"
+                    >
+                        <div className="text-white text-xs md:text-xl font-extrabold">
+                            <Print color="inherit" fontSize="inherit" />
+                        </div>
+                        <p>Export / Cetak</p>
+                    </button>
+                </div>
+                <Search link={route("data-kartu-keluarga")} />
             </div>
             <div
                 className={`grid grid-cols-1 md:grid-cols-2 ${

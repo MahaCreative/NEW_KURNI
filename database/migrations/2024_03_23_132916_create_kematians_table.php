@@ -39,6 +39,8 @@ return new class extends Migration
             $table->string('sebab_kematian');
             $table->string('tempat_kematian');
             $table->string('status_konfirmasi')->default('menggu konfirmasi');
+            $table->string('foto_kk')->nullable();
+            $table->string('foto_ktp')->nullable();
             $table->timestamps();
         });
     }

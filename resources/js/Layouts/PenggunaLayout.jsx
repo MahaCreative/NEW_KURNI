@@ -1,11 +1,52 @@
+import FormKelahiran from "@/Pages/Pengguna/Home/FormKelahiran";
+import FormKematian from "@/Pages/Pengguna/Home/FormKematian";
+import FormPindahKeluar from "@/Pages/Pengguna/Home/FormPindahKeluar";
+import FormPindahMasuk from "@/Pages/Pengguna/Home/FormPindahMasuk";
 import { Head, Link, usePage } from "@inertiajs/react";
-import React from "react";
+import Menu from "@mui/icons-material/Menu";
+import { MenuItem, TextField } from "@mui/material";
+import React, { useState } from "react";
 
 export default function PenggunaLayout({ children, title }) {
     const { desa } = usePage().props;
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [menuSuket, setMenuSuket] = useState({ status: false, menu: "" });
+    const [loading, setLoading] = useState(false);
+    const pilihMenu = (menu) => {
+        if (menuSuket.status == true) {
+            setMenuSuket({ ...menuSuket, status: false, menu: "" });
+        } else {
+            setMenuSuket({ ...menuSuket, status: true, menu: menu });
+        }
+    };
+    const getLoading = (value) => {
+        setTimeout(() => {
+            setLoading(value);
+        }, 350);
+    };
+    const [kategoriPindah, setKategoriPindah] = useState("masuk");
+    const [formPindah, setFormPindah] = useState(false);
+    const kategoriHandler = (e) => {
+        if (e.target.value == "") {
+            setFormPindah(false);
+        } else {
+            setFormPindah(true);
+            setKategoriPindah(e.target.value);
+        }
+    };
     return (
         <div className="w-full h-screen bg-orange-500 relative">
             <Head title={title} />
+            <div
+                className={`${
+                    loading ? "" : "hidden"
+                } top-0 left-0 w-full h-screen fixed bg-slate-950/30 flex flex-col items-center justify-center z-[9999]`}
+            >
+                <img src="Image/loading.gif" alt="" />
+                <p className="text-xl text-white font-light animate-pulse font-fira">
+                    Loading
+                </p>
+            </div>
             {/* Navbar Web*/}
             <div className="w-full flex justify-between items-center border-b border-white/50 absolute z-[5]">
                 {/* Logo */}
@@ -18,19 +59,55 @@ export default function PenggunaLayout({ children, title }) {
                         {"Sistem Informasi " + desa.nama_desa}
                     </h1>
                 </div>
-                <div className="flex gap-4 items-center justify-around px-8">
-                    <Link className="text-[12pt] font-light text-white">
+                <div className="hidden md:flex gap-4 items-center justify-around px-8 ">
+                    <Link
+                        className={` text-[12pt] font-light  border-b border-orange-500 py-1 text-orange-500`}
+                    >
                         Home
                     </Link>
-                    <Link className="text-[12pt] font-light text-white">
+                    <Link className={` text-[12pt] font-light text-white`}>
                         Layanan Suket
                     </Link>
-                    <Link className="text-[12pt] font-light text-white">
+                    <Link className={` text-[12pt] font-light text-white`}>
                         Informasi Penduduk
                     </Link>
+                    <Link
+                        className={` text-[12pt] font-light text-white bg-orange-500  px-4 rounded-md shadow-sm`}
+                    >
+                        Login
+                    </Link>
+                </div>
+                <div
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    className="block md:hidden text-white hover:cursor-pointer px-4 hover:text-orange-500"
+                >
+                    <Menu color="inherit" fontSize="medium" />
                 </div>
             </div>
-            <div></div>
+            {/* Mobile Nafbar */}
+            <div
+                className={`${
+                    menuOpen ? "flex" : "hidden"
+                } w-full gap-4 items-center justify-around px-8 bg-none z-[5] absolute left-0 top-16 bg-white/50 backdrop-blur-sm`}
+            >
+                <Link
+                    className={` text-[12pt] font-light  border-b border-orange-500 py-1 text-orange-500`}
+                >
+                    Home
+                </Link>
+                <Link className={` text-[12pt] font-light text-white`}>
+                    Layanan Suket
+                </Link>
+                <Link className={` text-[12pt] font-light text-white`}>
+                    Informasi Penduduk
+                </Link>
+                <Link
+                    className={` text-[12pt] font-light text-white bg-orange-500  px-4 rounded-md shadow-sm`}
+                >
+                    Login
+                </Link>
+            </div>
+
             <div className="left-0 top-0 w-full h-[100vh] lg:h-screen bg-[url('Image/bg.png')] bg-no-repeat bg-cover md:bg-contain bg-orange-500 bg-right-top">
                 <div className="w-full h-[inherit] flex flex-col-reverse justify-center md:flex-row items-center bg-slate-950/10">
                     <div className="px-4 md:px-8 lg:px-16  lg:w-[100%]">
@@ -55,9 +132,253 @@ export default function PenggunaLayout({ children, title }) {
                     </div>
                 </div>
             </div>
-            {children}
-            <div className="relative">
-                Selamat datang di sistem informasi pendataan sensus penduduk
+            {/* Pelayanan yah */}
+            <div className="relative bg-orange-500 px-4 md:px-8 lg:px-16">
+                <div className="w-full flex flex-col justify-center items-center py-16">
+                    <h1 className="text-white font-fira text-4xl tracking-tighter font-bold">
+                        Pelayanan Surat Keterangan
+                    </h1>
+                    <p className="text-sm text-white">
+                        Silahkan memilih menu dibawah ini untuk melakukan
+                        pelayanan surat keterangan yang diinginkan. dan silahkan
+                        mengisi formulir yang ada dengan benar.
+                    </p>
+                    <div className="flex flex-col gap-8 md:flex-row justify-around w-full py-9">
+                        <div className="bg-white py-3 px-4 rounded-tl-3xl rounded-br-3xl hover:cursor-pointer ">
+                            <p className="text-xl text-orange-500 tracking-tighter font-semibold mb-7">
+                                Pengajuan Surat Keterangan Lahir
+                            </p>
+                            <div className="flex items-center justify-center">
+                                <img
+                                    src="Image/gambat1.png"
+                                    alt=""
+                                    className="w-[100px]"
+                                />
+                            </div>
+                            <div
+                                onClick={() =>
+                                    pilihMenu("menu surat kelahiran")
+                                }
+                                className="text-white bg-gradient-to-br from-orange-600 via-orange-600 to-orange-400 rounded-md flex items-center justify-center mt-6 hover:cursor-pointer"
+                            >
+                                {menuSuket.menu == "menu surat kelahiran"
+                                    ? "Cancell"
+                                    : "Klick Disini"}
+                            </div>
+                        </div>
+                        <div className="bg-white py-3 px-4 rounded-tl-3xl rounded-br-3xl hover:cursor-pointer ">
+                            <p className="text-xl text-orange-500 tracking-tighter font-semibold mb-7">
+                                Pengajuan Surat Keterangan Kematian
+                            </p>
+                            <div className="flex items-center justify-center">
+                                <img
+                                    src="Image/gambat1.png"
+                                    alt=""
+                                    className="w-[100px]"
+                                />
+                            </div>
+                            <div
+                                onClick={() => pilihMenu("menu surat kematian")}
+                                className="text-white bg-gradient-to-br from-orange-600 via-orange-600 to-orange-400 rounded-md flex items-center justify-center mt-6 hover:cursor-pointer"
+                            >
+                                {menuSuket.menu == "menu surat kematian"
+                                    ? "Cancell"
+                                    : "Klick Disini"}
+                            </div>
+                        </div>
+                        <div className="bg-white py-3 px-4 rounded-tl-3xl rounded-br-3xl hover:cursor-pointer ">
+                            <p className="text-xl text-orange-500 tracking-tighter font-semibold mb-7">
+                                Pengajuan Surat Keterangan Pindah Domisili
+                            </p>
+                            <div className="flex items-center justify-center">
+                                <img
+                                    src="Image/gambat1.png"
+                                    alt=""
+                                    className="w-[100px]"
+                                />
+                            </div>
+                            <div
+                                onClick={() =>
+                                    pilihMenu("menu surat pindah domisili")
+                                }
+                                className="text-white bg-gradient-to-br from-orange-600 via-orange-600 to-orange-400 rounded-md flex items-center justify-center mt-6 hover:cursor-pointer"
+                            >
+                                {menuSuket.menu == "menu surat pindah domisili"
+                                    ? "Cancell"
+                                    : "Klick Disini"}
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className={`${
+                            menuSuket.status == false ? "hidden" : ""
+                        } bg-white px-4 md:px-8 lg:px-16 w-full rounded-lg`}
+                    >
+                        {menuSuket.menu == "menu surat kelahiran" && (
+                            <div
+                                className={` py-6 flex flex-col md:flex-row gap-3`}
+                            >
+                                <FormKelahiran getLoading={getLoading} />
+
+                                <div className="w-full md:w-1/2 bg-gray-200 py-2 px-3 rounded-md inline">
+                                    <h1 className="text-orange-500 font-medium">
+                                        Persyaratan Untuk Mengajukan Surat
+                                        Keterangan Lahir
+                                    </h1>
+                                    <p className="text-sm text-orange-800 my-3">
+                                        Hy selamat atas kelahiran anak anda,
+                                        Kami turut senang dengan kelahiran anak
+                                        anda 😊😊😊.
+                                    </p>
+                                    <p className="text-xs text-orange-800 my-2">
+                                        Untuk dapat membuat surat keterangan
+                                        lahir, anda perlu mengisi formulir serta
+                                        melampirkan persyaratan berkas. Setelah
+                                        formulir dan berkas telah diisi, maka
+                                        petugas desa akan mengkonfirmasi
+                                        permintaan anda. Jika permintaan anda
+                                        telah diterima maka anda akan
+                                        mendapatkan email, berisi Link surat
+                                        keterangan lahir anak anda
+                                    </p>
+                                    <p className="text-md text-orange-500 my-2">
+                                        Daftar Berkas Yang Perlu Anda Siapkan
+                                    </p>
+                                    <ul className="list-disc mx-4">
+                                        <li className="text-xs">
+                                            Foto Surat Pernyataan Lahir Dari
+                                            Rumah Sakit Jika Ada
+                                        </li>
+                                        <li className="text-xs">
+                                            Foto Kartu Keluarga yang
+                                            Bersangkutan Sakit{" "}
+                                        </li>
+                                        <li className="text-xs">
+                                            Foto KTP Orang Tua
+                                        </li>
+                                        <li className="text-xs">
+                                            Mengisi Formulir Data Kelahiran
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+                        {menuSuket.menu == "menu surat kematian" && (
+                            <div
+                                className={` py-6 flex flex-col md:flex-row gap-3 bg-white`}
+                            >
+                                <FormKematian getLoading={getLoading} />
+
+                                <div className="w-full md:w-1/2 bg-gray-200 py-2 px-3 rounded-md inline">
+                                    <h1 className="text-orange-500 font-medium">
+                                        Persyaratan Untuk Mengajukan Surat
+                                        Keterangan Kematian
+                                    </h1>
+                                    <p className="text-sm text-orange-800 my-3">
+                                        Kami Turut Berduka Cita atas Kepergian
+                                        Keluarga Anda 😭😭😢.
+                                    </p>
+                                    <p className="text-xs text-orange-800 my-2">
+                                        Untuk dapat membuat surat keterangan
+                                        kematian, anda perlu mengisi formulir
+                                        serta melampirkan persyaratan berkas.
+                                        Setelah formulir dan berkas telah diisi,
+                                        maka petugas desa akan mengkonfirmasi
+                                        permintaan anda. Jika permintaan anda
+                                        telah diterima maka anda akan
+                                        mendapatkan email, berisi Link surat
+                                        keterangan Kematian
+                                    </p>
+                                    <p className="text-md text-orange-500 my-2">
+                                        Daftar Berkas Yang Perlu Anda Siapkan
+                                    </p>
+                                    <ul className="list-disc mx-4">
+                                        <li className="text-xs">
+                                            Foto Kartu Keluarga yang
+                                            Bersangkutan
+                                        </li>
+                                        <li className="text-xs">
+                                            Foto KTP (Jika Ada)
+                                        </li>
+                                        <li className="text-xs">
+                                            Mengisi Formulir Data Kelahiran
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+                        {menuSuket.menu == "menu surat pindah domisili" && (
+                            <div
+                                className={` py-6 flex flex-col md:flex-row gap-3 bg-white`}
+                            >
+                                <div>
+                                    <TextField
+                                        className="w-full"
+                                        id="outlined-select-currency"
+                                        select
+                                        label="Kategori Pindah"
+                                        name="kategoriPindah"
+                                        value={kategoriPindah}
+                                        onChange={(e) => kategoriHandler(e)}
+                                    >
+                                        <MenuItem value="">
+                                            Pilih Perpindahan Penduduk
+                                        </MenuItem>
+                                        <MenuItem value="keluar">
+                                            Pindah Keluar
+                                        </MenuItem>
+                                        <MenuItem value="masuk">
+                                            Pindah Masuk
+                                        </MenuItem>
+                                    </TextField>
+                                    {formPindah && kategoriPindah == "masuk" ? (
+                                        <FormPindahMasuk
+                                            getLoading={getLoading}
+                                        />
+                                    ) : (
+                                        <FormPindahKeluar
+                                            getLoading={getLoading}
+                                        />
+                                    )}
+                                </div>
+
+                                <div className="w-full md:w-1/2 bg-gray-200 py-2 px-3 rounded-md inline">
+                                    <h1 className="text-orange-500 font-medium">
+                                        Persyaratan Untuk Mengajukan Surat
+                                        Keterangan Pindah Domisili
+                                    </h1>
+
+                                    <p className="text-xs text-orange-800 my-2">
+                                        Untuk dapat membuat surat keterangan
+                                        pindah domisili, anda perlu mengisi
+                                        formulir serta melampirkan persyaratan
+                                        berkas. Setelah formulir dan berkas
+                                        telah diisi, maka petugas desa akan
+                                        mengkonfirmasi permintaan anda. Jika
+                                        permintaan anda telah diterima maka anda
+                                        akan mendapatkan email, berisi Link
+                                        surat keterangan Pindah Domisili
+                                    </p>
+                                    <p className="text-md text-orange-500 my-2">
+                                        Daftar Berkas Yang Perlu Anda Siapkan
+                                    </p>
+                                    <ul className="list-disc mx-4">
+                                        <li className="text-xs">
+                                            Foto Kartu Keluarga yang
+                                            Bersangkutan
+                                        </li>
+                                        <li className="text-xs">
+                                            Foto KTP (Jika Ada)
+                                        </li>
+                                        <li className="text-xs">
+                                            Mengisi Formulir Pindah Domisili
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
             {/* Footer */}
             <div className="  w-full h-[500px] bg-cover bg-no-repeat bg-left-top bg-orange-500">

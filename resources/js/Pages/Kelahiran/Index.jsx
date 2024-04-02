@@ -19,17 +19,15 @@ import { MenuItem, Select, Tooltip } from "@mui/material";
 import { Link, router } from "@inertiajs/react";
 import PilihPenduduk from "./PilihPenduduk";
 import FormExport from "./FormExport";
+import FormKelahiran from "./FormKelahiran";
+import Search from "@/Components/Search";
 
 export default function Index(props) {
     const [modalTambah, setModalTambah] = useState(false);
     const [modalDelete, setModalDelete] = useState(false);
-    const [modalPilihPenduduk, setModalPilihPenduduk] = useState(false);
-    const [modalPertanyaan, setModalPertanyaan] = useState(false);
     const [modalExport, setModalExport] = useState(false);
     const [model, setModel] = useState(null);
     const kelahiran = props.kelahiran;
-    const [dataAyah, setDataAyah] = useState([]);
-    const [dataIbu, setDataIbu] = useState([]);
     const columns = [
         {
             name: "#",
@@ -161,7 +159,7 @@ export default function Index(props) {
     ];
     const editHandler = (row) => {
         setModel(row);
-        setModalPertanyaan(true);
+        setModalTambah(true);
     };
     const deleteHandler = (row) => {
         setModel(row);
@@ -267,81 +265,39 @@ export default function Index(props) {
                         : "Tambah data kelahiran"
                 }
             >
-                <Form
+                <FormKelahiran
                     model={model}
                     setModel={setModel}
                     setOpen={setModalTambah}
-                    dataAyah={dataAyah}
-                    dataIbu={dataIbu}
                 />
             </Modal>
-            <Modal
-                open={modalPilihPenduduk}
-                setOpen={setModalPilihPenduduk}
-                setModel={setModel}
-                title={"Pilih data Ayah dan Ibu terlebih dahulu"}
-            >
-                <PilihPenduduk
-                    lanjutPilih={lanjutPilih}
-                    getAyah={getAyah}
-                    getIbu={getIbu}
-                />
-            </Modal>
-            {/* modal tanyah */}
-            <Modal
-                open={modalPertanyaan}
-                setOpen={setModalPertanyaan}
-                setModel={setModel}
-                title={"Konfirmasi Dahulu"}
-            >
-                <div className="w-[50vw]">
-                    <p>
-                        Yakin ingin menghapus data ini? menghapus data ini akan
-                        menghapus data yang terkait lainnya
-                    </p>
-                    <div className="flex gap-3 py-4">
+            <div className="flex flex-col md:flex-row bg-white py-2 px-4 rounded-md justify-between gap-2 items-center">
+                <div className="w-full bg-white px-4 rounded-md flex justify-between items-center my-3 gap-5">
+                    <h1 className="font-bold text-sm md:text-2xl text-orange-500 ">
+                        Data Kelahiran
+                    </h1>
+                    <div className="flex gap-1">
                         <button
-                            onClick={ubahDataHandler}
+                            onClick={() => setModalTambah(true)}
                             className="btn-primary"
                         >
-                            <div className="text-white text-xl">
-                                <Check color="inherit" fontSize="inherit" />
+                            <div className="text-white text-xs md:text-xl font-extrabold">
+                                <Add color="inherit" fontSize="inherit" />
                             </div>
-                            <p>Ubah Data</p>
+                            <p>Tambah</p>
                         </button>
-                        <button onClick={tidakHandler} className="btn-danger">
-                            <div className="text-white text-xl">
-                                <Cancel color="inherit" fontSize="inherit" />
+                        <button
+                            onClick={() => setModalExport(true)}
+                            className="btn-success"
+                        >
+                            <div className="text-white text-xs md:text-xl font-extrabold">
+                                <Print color="inherit" fontSize="inherit" />
                             </div>
-                            <p>Tidak Mengubah Data</p>
+                            <p>Export / Cetak Laporan</p>
                         </button>
                     </div>
                 </div>
-            </Modal>
-            <div className="bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
-                <h1 className="font-bold text-2xl text-orange-500 ">
-                    Data Kelahiran
-                </h1>
-                <div className="flex gap-3">
-                    <button
-                        onClick={() => setModalPilihPenduduk(true)}
-                        className="btn-primary"
-                    >
-                        <div className="text-white text-xl font-extrabold">
-                            <Add color="inherit" fontSize="inherit" />
-                        </div>
-                        <p>Tambah</p>
-                    </button>
-                    <button
-                        onClick={() => setModalExport(true)}
-                        className="btn-success"
-                    >
-                        <div className="text-white text-xl font-extrabold">
-                            <Print color="inherit" fontSize="inherit" />
-                        </div>
-                        <p>Export / Cetak Laporan</p>
-                    </button>
-                </div>
+                <Search link={route("kelahiran")} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-3">
                 <Card

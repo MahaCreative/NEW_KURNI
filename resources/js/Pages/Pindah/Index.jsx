@@ -25,6 +25,7 @@ import Card from "@/Components/Card";
 import DataTable from "react-data-table-component";
 import { Tooltip } from "@mui/material";
 import FormExport from "./FormExport";
+import Search from "@/Components/Search";
 
 export default function Index(props) {
     const [modalPilihan, setModalPilihan] = useState(false);
@@ -291,6 +292,12 @@ export default function Index(props) {
             ],
         },
     };
+    const konfirmasiHandler = (value, id) => {
+        router.post(route("konfirmasi.permintaan-pindah"), {
+            id: id,
+            konfirmasi: value,
+        });
+    };
     return (
         <div className="py-8 px-4 md:px-8 lg:px-16">
             <Modal
@@ -385,30 +392,33 @@ export default function Index(props) {
                     </div>
                 </div>
             </Modal>
-            <div className="bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
-                <h1 className="font-bold text-2xl text-orange-500 ">
-                    Data Pindahan Penduduk
-                </h1>
-                <div className="flex gap-4">
-                    <button
-                        onClick={() => setModalPilihan(true)}
-                        className="btn-primary"
-                    >
-                        <div className="text-white text-xl font-extrabold">
-                            <Add color="inherit" fontSize="inherit" />
-                        </div>
-                        <p>Tambah</p>
-                    </button>
-                    <button
-                        onClick={() => setModalExport(true)}
-                        className="btn-success"
-                    >
-                        <div className="text-white text-xl font-extrabold">
-                            <Add color="inherit" fontSize="inherit" />
-                        </div>
-                        <p>Export / Cetak Laporan</p>
-                    </button>
+            <div className="flex flex-col md:flex-row bg-white py-2 px-4 rounded-md justify-between gap-2 items-center">
+                <div className="w-full gap-3 bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
+                    <h1 className="font-bold text-sm md:text-2xl text-orange-500 ">
+                        Data Pindahan Penduduk
+                    </h1>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setModalPilihan(true)}
+                            className="btn-primary"
+                        >
+                            <div className="text-white text-xs md:text-xl font-extrabold">
+                                <Add color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Tambah</p>
+                        </button>
+                        <button
+                            onClick={() => setModalExport(true)}
+                            className="btn-success"
+                        >
+                            <div className="text-white text-xs md:text-xl font-extrabold">
+                                <Add color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Export / Cetak Laporan</p>
+                        </button>
+                    </div>
                 </div>
+                <Search link={route("pindah")} />
             </div>
             {/* Card  */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 my-3">

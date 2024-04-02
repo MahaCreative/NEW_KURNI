@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmailSuketKelahiran;
 use App\Models\Desa;
 use App\Models\Kematian;
 use App\Models\Penduduk;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Svg\Tag\Rect;
 
 class KematianController extends Controller
 {
@@ -32,8 +36,8 @@ class KematianController extends Controller
     {
 
         $attr = $request->validate([
-            'nik'                               => ['required', 'digits:16'],
-            'kk'                                => ['required', 'digits:16'],
+            'nik'                               => ['required', 'digits:16', 'unique:kematians,nik'],
+            'kk'                                => ['required', 'digits:16', 'unique:kematians,kk'],
             'nama'                              => ['required', 'string', 'max:64'],
             'jenis_kelamin'                     => ['required', 'numeric'],
             'tempat_lahir'                      => ['required', 'string',],
@@ -105,8 +109,23 @@ class KematianController extends Controller
     {
 
         $kematian = Kematian::findOrFail($request->id);
-
-        $kematian->update(['status_konfirmasi' => $request->konfirmasi]);
+        // dd($request->all());
+        if ($request->konfirmasi !== null) {
+            $kematian->update(['status_konfirmasi' => $request->konfirmasi]);
+            if ($kematian->email) {
+                $data = [
+                    'id' => $kematian->id,
+                    'title' => 'Konfirmasi Surat Keterangan Kematian',
+                    'subjek' => 'Surat Keterangan Kematian',
+                    'nama_penerima' => $kematian->nama,
+                    'link' => route('cetak.suket-kematian', $kematian->id),
+                    'status_permintaan' => $kematian->status_konfirmasi,
+                    'link_permintaan' => route('home'),
+                    'desa' => Desa::first(),
+                ];
+                Mail::to($kematian->email)->send(new EmailSuketKelahiran($data));
+            }
+        }
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil mengkonfirmasi data kematian']);
     }
 
@@ -168,5 +187,88 @@ class KematianController extends Controller
         }
         $kematian = $query->get();
         return $kematian;
+    }
+
+    public function permintaan_kematian(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'nik'                               => ['required', 'digits:16', 'unique:kematians,nik'],
+            'kk'                                => ['required', 'digits:16', 'unique:kematians,kk'],
+            'nama'                              => ['required', 'string', 'max:64'],
+            'jenis_kelamin'                     => ['required', 'numeric'],
+            'tempat_lahir'                      => ['required', 'string',],
+            'tanggal_lahir'                     => ['required', 'date',],
+            'agama_id'                          => ['required', 'numeric'],
+            'pendidikan_id'                     => ['nullable', 'numeric'],
+            'pekerjaan_id'                      => ['nullable', 'numeric'],
+            'darah_id'                          => ['nullable', 'numeric'],
+            'status_perkawinan_id'              => ['required', 'numeric'],
+            'status_hubungan_dalam_keluarga_id' => ['required', 'numeric'],
+            'hari_kematian' => ['required', 'in:senin,selasa,rabu,kamis,jumat,sabtu,minggu'],
+            'tgl_kematian' => ['required', 'date', 'after:now'],
+            'waktu_kematian' => ['nullable'],
+            'sebab_kematian' => ['required', 'string', 'min:5'],
+            'tempat_kematian' => ['nullable', 'string'],
+            'foto_ktp' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'foto_kk' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors(['type' => 'error', 'message' => $validator->errors()->all()]);
+        }
+        $data = Penduduk::where('kk', '=', $request->kk)->where('nik', '=', $request->nik)
+            ->first();
+        if ($data == null) {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        }
+        $foto_kk = $request->file('foto_kk') ? $request->file('foto_kk')->store('DataKematian') : null;
+        $foto_ktp = $request->file('foto_ktp') ? $request->file('foto_ktp')->store('DataKematian') : null;
+        $kematian = Kematian::create([
+            'kd_kematian' => now()->format('ymd') . Kematian::count() + 1,
+            'email' => $request->email,
+            'nik' => $data->nik,
+            'kk' => $data->kk,
+            'nama' => $data->nama,
+            'jenis_kelamin' => $data->jenis_kelamin,
+            'tempat_lahir' => $data->tempat_lahir,
+            'tanggal_lahir' => $data->tanggal_lahir,
+            'agama_id' => $data->agama_id,
+            'pendidikan_id' => $data->pendidikan_id,
+            'pekerjaan_id' => $data->pekerjaan_id,
+            'darah_id' => $data->darah_id,
+            'status_perkawinan_id' => $data->status_perkawinan_id,
+            'status_hubungan_dalam_keluarga_id' => $data->status_hubungan_dalam_keluarga_id,
+            'nik_ayah' => $data->nik_ayah,
+            'nik_ibu' => $data->nik_ibu,
+            'nama_ayah' => $data->nama_ayah,
+            'nama_ibu' => $data->nama_ibu,
+            'alamat' => $data->alamat,
+            'detail_dusun_id' => $data->detail_dusun_id,
+            'hari_kematian' => $request->hari_kematian,
+            'tgl_kematian' => $request->tgl_kematian,
+            'waktu_kematian' => $request->waktu_kematian,
+            'sebab_kematian' => $request->sebab_kematian,
+            'tempat_kematian' => $request->tempat_kematian,
+            'status_konfirmasi' => $request->status_konfirmasi,
+            'foto_kk' => $foto_kk,
+            'foto_ktp' => $foto_ktp,
+            'status_konfirmasi' => 'menunggu konfirmasi'
+        ]);
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil mengirim permintaan. Permintaan anda akan segera di cek oleh petugas desa. Setelah permintaan diterima silahkan mengecek email anda untuk mendapatkan LINK Surat Kematian']);
+    }
+    public function cek_penduduk(Request $request)
+    {
+
+
+        $data = Penduduk::with(['statusHubunganDalamKeluarga', 'detail_dusun' => function ($q) {
+            $q->with('dusun');
+        }])->where('kk', '=', $request->kk)->where('nik', '=', $request->nik)
+            ->first();
+        if ($data == null) {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        } else {
+            return response()->json($data);
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmailSuketKelahiran;
 use App\Models\Desa;
 use App\Models\DetailDusun;
 use App\Models\Dusun;
@@ -12,6 +13,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class PindahController extends Controller
@@ -60,33 +62,33 @@ class PindahController extends Controller
     public function storeKeluar(Request $request)
     {
 
-        // $attr = $request->validate([
-        //     'nik'                               => ['required', 'digits:16'],
-        //     'kk'                                => ['required', 'digits:16'],
-        //     'nama'                              => ['required', 'string', 'max:64'],
-        //     'jenis_kelamin'                     => ['required', 'numeric'],
-        //     'tempat_lahir'                      => ['required', 'string',],
-        //     'tanggal_lahir'                     => ['required', 'date',],
-        //     'agama_id'                          => ['required', 'numeric'],
-        //     'pendidikan_id'                     => ['nullable', 'numeric'],
-        //     'pekerjaan_id'                      => ['nullable', 'numeric'],
-        //     'darah_id'                          => ['nullable', 'numeric'],
-        //     'status_perkawinan_id'              => ['required', 'numeric'],
-        //     'status_hubungan_dalam_keluarga_id' => ['required', 'numeric'],
-        //     'detail_dusun_id' => ['required', 'numeric'],
-        //     "desa_asal" => ['required'],
-        //     "dusun_asal" => ['required'],
-        //     "rt_asal" => ['required'],
-        //     "rw_asal" => ['required'],
-        //     "alamat_asal" => ['required'],
-        //     "desa_tujuan" => ['required'],
-        //     "dusun_tujuan" => ['required'],
-        //     "rt_tujuan" => ['nullable', 'numeric'],
-        //     "rw_tujuan" => ['nullable', 'numeric'],
-        //     "alamat_tujuan" => ['required'],
-        //     "tgl_pindah" => ['required'],
-        //     "alasan_pindah" => ['required'],
-        // ]);
+        $attr = $request->validate([
+            'nik'                               => ['required', 'digits:16'],
+            'kk'                                => ['required', 'digits:16'],
+            'nama'                              => ['required', 'string', 'max:64'],
+            'jenis_kelamin'                     => ['required', 'numeric'],
+            'tempat_lahir'                      => ['required', 'string',],
+            'tanggal_lahir'                     => ['required', 'date',],
+            'agama_id'                          => ['required', 'numeric'],
+            'pendidikan_id'                     => ['nullable', 'numeric'],
+            'pekerjaan_id'                      => ['nullable', 'numeric'],
+            'darah_id'                          => ['nullable', 'numeric'],
+            'status_perkawinan_id'              => ['required', 'numeric'],
+            'status_hubungan_dalam_keluarga_id' => ['required', 'numeric'],
+            'detail_dusun_id' => ['required', 'numeric'],
+            "desa_asal" => ['required'],
+            "dusun_asal" => ['required'],
+            "rt_asal" => ['required'],
+            "rw_asal" => ['required'],
+            "alamat_asal" => ['required'],
+            "desa_tujuan" => ['required'],
+            "dusun_tujuan" => ['required'],
+            "rt_tujuan" => ['nullable', 'numeric'],
+            "rw_tujuan" => ['nullable', 'numeric'],
+            "alamat_tujuan" => ['required'],
+            "tgl_pindah" => ['required'],
+            "alasan_pindah" => ['required'],
+        ]);
         $pinda = Pindah::create([
             'nik' => $request->nik,
             'kk' => $request->kk,
@@ -136,43 +138,43 @@ class PindahController extends Controller
     public function storemasuk(Request $request)
     {
         // dd($request->all());
-        // $validator = Validator::make(
-        //     $request->all(),
-        //     [
-        //         'nik' =>  ['required', 'digits:16', 'unique:pindahs,nik'],
-        //         // 'kk' =>  ['required', 'digits:16', 'unique:pindahs,kk'],
-        //         // 'dusun' =>  ['required'],
-        //         // 'nama' =>  ['required'],
-        //         // 'jenis_kelamin' =>  ['required'],
-        //         // 'tempat_lahir' =>  ['required'],
-        //         // 'tanggal_lahir' =>  ['required'],
-        //         // 'agama_id' =>  ['required'],
-        //         // 'pendidikan_id' =>  ['required'],
-        //         // 'pekerjaan_id' =>  ['required'],
-        //         // 'darah_id' =>  ['required'],
-        //         // 'status_perkawinan_id' =>  ['required'],
-        //         // 'status_hubungan_dalam_keluarga_id' =>  ['required'],
-        //         // 'desa_asal' =>  ['required'],
-        //         // 'dusun_asal' =>  ['required'],
-        //         // 'rt_asal' =>  ['nullable', 'numeric'],
-        //         // 'rw_asal' =>  ['nullable', 'numeric'],
-        //         // 'alamat_asal' =>  ['required'],
-        //         // 'desa_tujuan' =>  ['required'],
-        //         // 'dusun_tujuan' =>  ['required'],
-        //         // 'detail_dusun_id' =>  ['required'],
-        //         // 'alamat_tujuan' =>  ['required'],
-        //         // 'tgl_pindah' =>  ['required'],
-        //         // 'alasan_pindah' =>  ['required'],
-        //         // 'pengikut' =>  ['required'],
-        //         // 'nik_pengikut' =>  ['required'],
-        //         // 'nama_pengikut' =>  ['required'],
-        //         // 'shdk_pengikut' =>  ['required'],
-        //         // 'nama_shdk_pengikut' =>  ['required'],
-        //     ]
-        // );
-        // if ($validator->fails()) {
-        //     return redirect()->back()->with(['type' => 'error', 'message' => $validator->errors()->all()]);
-        // }
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nik' =>  ['required', 'digits:16', 'unique:pindahs,nik'],
+                // 'kk' =>  ['required', 'digits:16', 'unique:pindahs,kk'],
+                // 'dusun' =>  ['required'],
+                // 'nama' =>  ['required'],
+                // 'jenis_kelamin' =>  ['required'],
+                // 'tempat_lahir' =>  ['required'],
+                // 'tanggal_lahir' =>  ['required'],
+                // 'agama_id' =>  ['required'],
+                // 'pendidikan_id' =>  ['required'],
+                // 'pekerjaan_id' =>  ['required'],
+                // 'darah_id' =>  ['required'],
+                // 'status_perkawinan_id' =>  ['required'],
+                // 'status_hubungan_dalam_keluarga_id' =>  ['required'],
+                // 'desa_asal' =>  ['required'],
+                // 'dusun_asal' =>  ['required'],
+                // 'rt_asal' =>  ['nullable', 'numeric'],
+                // 'rw_asal' =>  ['nullable', 'numeric'],
+                // 'alamat_asal' =>  ['required'],
+                // 'desa_tujuan' =>  ['required'],
+                // 'dusun_tujuan' =>  ['required'],
+                // 'detail_dusun_id' =>  ['required'],
+                // 'alamat_tujuan' =>  ['required'],
+                // 'tgl_pindah' =>  ['required'],
+                // 'alasan_pindah' =>  ['required'],
+                // 'pengikut' =>  ['required'],
+                // 'nik_pengikut' =>  ['required'],
+                // 'nama_pengikut' =>  ['required'],
+                // 'shdk_pengikut' =>  ['required'],
+                // 'nama_shdk_pengikut' =>  ['required'],
+            ]
+        );
+        if ($validator->fails()) {
+            return redirect()->back()->with(['type' => 'error', 'message' => $validator->errors()->all()]);
+        }
         $tujuan = DetailDusun::findOrFail($request->detail_dusun_id);
         $pindah = Pindah::create([
             'nik' => $request->nik,
@@ -215,6 +217,30 @@ class PindahController extends Controller
         }
         return redirect()->route('pindah')->with(['type' => 'success', 'message' => 'Berhasil menambahkan data pindahan baru']);
         // }
+    }
+
+    public function konfirmasi_permintaan_pindah(Request $request)
+    {
+
+        $pindah = Pindah::findOrFail($request->id);
+
+        if ($request->konfirmasi !== null) {
+            $pindah->update(['menunggu_konfirmasi' => $request->konfirmasi]);
+            if ($pindah->email) {
+                $data = [
+                    'id' => $pindah->id,
+                    'title' => 'Konfirmasi Surat Keterangan Pindah Domisili',
+                    'subjek' => 'Surat Keterangan Pindah Domisili',
+                    'nama_penerima' => $pindah->nama,
+                    'link' => route('cetak.suket-pindah', $pindah->id),
+                    'status_permintaan' => $pindah->menunggu_konfirmasi,
+                    'link_permintaan' => route('home'),
+                    'desa' => Desa::first(),
+                ];
+                Mail::to($pindah->email)->send(new EmailSuketKelahiran($data));
+            }
+        }
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil mengkonfirmasi permintaan pindah domisili']);
     }
 
     public function delete(Request $request)
@@ -370,5 +396,161 @@ class PindahController extends Controller
         }
 
         return $result;
+    }
+
+    public function permintaan_pindah_masuk(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'email'                               => ['required', 'email'],
+                'nik'                               => ['required', 'unique:pindahs,nik'],
+                'kk'                                => ['required'],
+                'nama'                              => ['required', 'string', 'max:64'],
+                'jenis_kelamin'                     => ['required', 'numeric'],
+                'tempat_lahir'                      => ['required', 'string',],
+                'tanggal_lahir'                     => ['required', 'date',],
+                'agama_id'                          => ['required', 'numeric'],
+                'pendidikan_id'                     => ['nullable', 'numeric'],
+                'pekerjaan_id'                      => ['nullable', 'numeric'],
+                'darah_id'                          => ['nullable', 'numeric'],
+                'status_perkawinan_id'              => ['required', 'numeric'],
+                'status_hubungan_dalam_keluarga_id' => ['required', 'numeric'],
+                "desa_asal" => ['required'],
+                "dusun_asal" => ['required'],
+                "rt_asal" => ['required'],
+                "rw_asal" => ['required'],
+                "alamat_asal" => ['required'],
+                "desa_tujuan" => ['required'],
+                "dusun_tujuan" => ['required'],
+                "rt_tujuan" => ['nullable', 'numeric'],
+                "rw_tujuan" => ['nullable', 'numeric'],
+                "alamat_tujuan" => ['required'],
+                "tgl_pindah" => ['required'],
+                "alasan_pindah" => ['required'],
+            ]
+        );
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors(['type' => 'error', 'message' => $validator->errors()->all()]);
+        }
+        $pinda = Pindah::create([
+            'nik' => $request->nik,
+            'kk' => $request->kk,
+            'nama' => $request->nama,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'agama_id' => $request->agama_id,
+            'pendidikan_id' => $request->pendidikan_id,
+            'pekerjaan_id' => $request->pekerjaan_id,
+            'darah_id' => $request->darah_id,
+            'status_perkawinan_id' => $request->status_perkawinan_id,
+            'status_hubungan_dalam_keluarga_id' => $request->status_hubungan_dalam_keluarga_id,
+            "desa_asal" => $request->desa_asal,
+            "dusun_asal" => $request->dusun_asal,
+            "rt_asal" => $request->rt_asal,
+            "rw_asal" => $request->rw_asal,
+            "alamat_asal" => $request->alamat_asal,
+            "desa_tujuan" => $request->desa_tujuan,
+            "dusun_tujuan" => $request->dusun_tujuan,
+            "rt_tujuan" => $request->rt_tujuan,
+            "rw_tujuan" => $request->rw_tujuan,
+            "alamat_tujuan" => $request->alamat_tujuan,
+            "tgl_pindah" => $request->tgl_pindah,
+            "alasan_pindah" => $request->alasan_pindah,
+            'kategori_pindah' => 'masuk',
+            'menunggu_konfirmasi' => 'menunggu konfirmasi'
+        ]);
+        if ($pinda) {
+            if ($request->pengikut) {
+                foreach ($request->pengikut as $pengikut) {
+                    $pengikut = PengikutPindah::create([
+                        'pindah_id' => $pinda->id,
+                        'nik' => $pengikut['nik'],
+                        'nama' => $pengikut['nama'],
+                        'status_hubungan_dalam_keluarga_id' => $pengikut['shdk'],
+                    ]);
+                }
+            }
+        }
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil mengajukan permintaan surat keterangan pindah domisili. silahkan menunggu petugas desa melakukan pengecekan data, setelah petugas melakukan pengecekan data maka anda akan mendapat pesan email yang berisi LINK Surat Keterangan Pindah Domisili Anda']);
+    }
+    public function permintaan_pindah_keluar(Request $request)
+    {
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'email'                               => ['required', 'email'],
+                'nik'                               => ['required', 'unique:pindahs,nik'],
+                'kk'                                => ['required'],
+                'nama'                              => ['required', 'string', 'max:64'],
+                'jenis_kelamin'                     => ['required', 'numeric'],
+                'tempat_lahir'                      => ['required', 'string',],
+                'tanggal_lahir'                     => ['required', 'date',],
+                'agama_id'                          => ['required', 'numeric'],
+                'pendidikan_id'                     => ['nullable', 'numeric'],
+                'pekerjaan_id'                      => ['nullable', 'numeric'],
+                'darah_id'                          => ['nullable', 'numeric'],
+                'status_perkawinan_id'              => ['required', 'numeric'],
+                'status_hubungan_dalam_keluarga_id' => ['required', 'numeric'],
+                "desa_asal" => ['required'],
+                "dusun_asal" => ['required'],
+                "rt_asal" => ['required'],
+                "rw_asal" => ['required'],
+                "alamat_asal" => ['required'],
+                "desa_tujuan" => ['required'],
+                "dusun_tujuan" => ['required'],
+                "rt_tujuan" => ['nullable', 'numeric'],
+                "rw_tujuan" => ['nullable', 'numeric'],
+                "alamat_tujuan" => ['required'],
+                "tgl_pindah" => ['required'],
+                "alasan_pindah" => ['required'],
+            ]
+        );
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors(['type' => 'error', 'message' => $validator->errors()->all()]);
+        }
+        $pinda = Pindah::create([
+            'nik' => $request->nik,
+            'kk' => $request->kk,
+            'nama' => $request->nama,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'agama_id' => $request->agama_id,
+            'pendidikan_id' => $request->pendidikan_id,
+            'pekerjaan_id' => $request->pekerjaan_id,
+            'darah_id' => $request->darah_id,
+            'status_perkawinan_id' => $request->status_perkawinan_id,
+            'status_hubungan_dalam_keluarga_id' => $request->status_hubungan_dalam_keluarga_id,
+            "desa_asal" => $request->desa_asal,
+            "dusun_asal" => $request->dusun_asal,
+            "rt_asal" => $request->rt_asal,
+            "rw_asal" => $request->rw_asal,
+            "alamat_asal" => $request->alamat_asal,
+            "desa_tujuan" => $request->desa_tujuan,
+            "dusun_tujuan" => $request->dusun_tujuan,
+            "rt_tujuan" => $request->rt_tujuan,
+            "rw_tujuan" => $request->rw_tujuan,
+            "alamat_tujuan" => $request->alamat_tujuan,
+            "tgl_pindah" => $request->tgl_pindah,
+            "alasan_pindah" => $request->alasan_pindah,
+            'kategori_pindah' => 'keluar',
+            'menunggu_konfirmasi' => 'menunggu konfirmasi'
+        ]);
+        if ($pinda) {
+            if ($request->pengikut) {
+                foreach ($request->pengikut as $pengikut) {
+                    $pengikut = PengikutPindah::create([
+                        'pindah_id' => $pinda->id,
+                        'nik' => $pengikut['nik'],
+                        'nama' => $pengikut['nama'],
+                        'status_hubungan_dalam_keluarga_id' => $pengikut['shdk'],
+                    ]);
+                }
+            }
+        }
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil mengajukan permintaan surat keterangan pindah domisili. silahkan menunggu petugas desa melakukan pengecekan data, setelah petugas melakukan pengecekan data maka anda akan mendapat pesan email yang berisi LINK Surat Keterangan Pindah Domisili Anda']);
     }
 }

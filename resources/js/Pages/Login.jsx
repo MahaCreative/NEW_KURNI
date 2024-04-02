@@ -20,9 +20,8 @@ export default function Login() {
         flash.type && toast[flash.type](flash.message);
     }, [flash]);
     return (
-        <div className="w-full h-screen flex justify-center items-center">
-            <Toaster />
-            <div className="flex gap-5 justify-between w-1/2 px-16">
+        <div className="w-[50vw] flex justify-center items-center">
+            <div className="flex gap-5 justify-between w-full">
                 <form
                     onSubmit={submitHandler}
                     action=""

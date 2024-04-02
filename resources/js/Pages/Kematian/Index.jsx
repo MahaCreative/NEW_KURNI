@@ -18,6 +18,7 @@ import DataTable from "react-data-table-component";
 import PilihPenduduk from "./PilihPenduduk";
 import Form from "./Form";
 import FormExport from "./FormExport";
+import Search from "@/Components/Search";
 
 export default function Index(props) {
     const kematian = props.kematian;
@@ -273,30 +274,33 @@ export default function Index(props) {
                     setOpen={setModalEdit}
                 />
             </Modal>
-            <div className="bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
-                <h1 className="font-bold text-2xl text-orange-500 ">
-                    Data Kematian
-                </h1>
-                <div className="flex gap-4">
-                    <button
-                        onClick={() => setModalPilihPenduduk(true)}
-                        className="btn-primary"
-                    >
-                        <div className="text-white text-xl font-extrabold">
-                            <Add color="inherit" fontSize="inherit" />
-                        </div>
-                        <p>Tambah</p>
-                    </button>
-                    <button
-                        onClick={() => setModalExport(true)}
-                        className="btn-success"
-                    >
-                        <div className="text-white text-xl font-extrabold">
-                            <Print color="inherit" fontSize="inherit" />
-                        </div>
-                        <p>Export / Cetak Laporan</p>
-                    </button>
+            <div className="flex flex-col md:flex-row bg-white py-2 px-4 rounded-md justify-between gap-2 items-center">
+                <div className="w-full gap-3 bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
+                    <h1 className="font-bold text-sm md:text-2xl text-orange-500 ">
+                        Data Kematian
+                    </h1>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => setModalPilihPenduduk(true)}
+                            className="btn-primary"
+                        >
+                            <div className="text-white text-xl font-extrabold">
+                                <Add color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Tambah</p>
+                        </button>
+                        <button
+                            onClick={() => setModalExport(true)}
+                            className="btn-success"
+                        >
+                            <div className="text-white text-xl font-extrabold">
+                                <Print color="inherit" fontSize="inherit" />
+                            </div>
+                            <p>Export / Cetak Laporan</p>
+                        </button>
+                    </div>
                 </div>
+                <Search link={route("kematian")} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-3">
                 <Card
