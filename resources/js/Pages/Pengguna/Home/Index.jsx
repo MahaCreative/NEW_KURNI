@@ -12,6 +12,7 @@ import Login from "@/Pages/Login";
 
 export default function PenggunaLayout({ children, title }) {
     const { desa } = usePage().props;
+    const { auth } = usePage().props;
     const [menuOpen, setMenuOpen] = useState(false);
     const [menuSuket, setMenuSuket] = useState({ status: false, menu: "" });
     const [login, setLogin] = useState(false);
@@ -99,12 +100,31 @@ export default function PenggunaLayout({ children, title }) {
                     >
                         Informasi Penduduk
                     </button>
-                    <button
-                        onClick={() => setLogin(true)}
-                        className={` text-[12pt] font-light text-white bg-orange-500  px-4 rounded-md shadow-sm`}
-                    >
-                        Login
-                    </button>
+                    {auth.user ? (
+                        <>
+                            <Link
+                                as="button"
+                                href={route("dashboard")}
+                                onClick={() => setLogin(true)}
+                                className={` text-[12pt] font-light text-white bg-orange-500  px-4 rounded-md shadow-sm`}
+                            >
+                                Dashboard
+                            </Link>
+                            <Link
+                                href={route("logout")}
+                                className="text-base hover:cursor-pointer text-white hover:bg-orange-600 block px-2 py-2 rounded-md"
+                            >
+                                Logout
+                            </Link>
+                        </>
+                    ) : (
+                        <button
+                            onClick={() => setLogin(true)}
+                            className={` text-[12pt] font-light text-white bg-orange-500  px-4 rounded-md shadow-sm`}
+                        >
+                            Login
+                        </button>
+                    )}
                 </div>
                 <div
                     onClick={() => setMenuOpen(!menuOpen)}

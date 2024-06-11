@@ -37,12 +37,18 @@ export default function Modal({
                                 setOpen(false);
                                 setModel(null);
                             }}
-                            className="hover:text-orange-500 text-gray-400 hover:cursor-pointer"
+                            className="hover:text-orange-500 relative z-50 text-gray-400 hover:cursor-pointer"
                         >
                             <Close color="inherit" fontSize="inherit" />
                         </div>
                     </div>
                     <div className="py-6">{children}</div>
+                    <button
+                        onClick={() => setOpen(false)}
+                        className="my-3 bg-red-500 py-2 px-3 text-white "
+                    >
+                        Close
+                    </button>
                 </div>
             </Transition>
         </div>

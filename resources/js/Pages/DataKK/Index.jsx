@@ -236,7 +236,7 @@ export default function Index(props) {
                             title={
                                 <div>
                                     <p>Jumlah Penduduk </p>
-                                    <p className="font-bold text-xl">
+                                    <p className="font-bold text-base">
                                         Dusun {item.nama}
                                     </p>
                                 </div>

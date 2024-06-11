@@ -18,10 +18,12 @@ use App\Http\Controllers\UserController;
 use App\Models\DetailDusun;
 use App\Models\Dusun;
 use App\Models\Penduduk;
+use App\Models\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 Route::get('', [HomeController::class, 'index'])->name('home');
@@ -56,6 +58,47 @@ Route::get('logout', function () {
 })->name('logout');
 Route::get('grafik-penduduk', [GrafikController::class, 'index'])->name('grafik');
 Route::middleware(['auth'])->group(function () {
+
+    Route::post('update-profile', function (Request $request) {
+        $validator = Validator::make($request->all(), [
+            "name" => 'required|string',
+            "email" => 'required|email|unique:users,email,' . $request->id,
+            "password" => 'nullable|min:6',
+            "alamat" => 'required|string|min:12',
+            "telp" => 'required|numeric|min:12',
+            "dusun" => 'nullable',
+            "foto" => 'nullable',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->with(['type' => 'error', 'message' => $validator->errors()->all()])->withErrors($validator)->withInput();
+        }
+        $foto = '';
+        $user = User::findOrFail($request->id);
+        if ($request->hasFile('foto')) {
+            $request->validate([
+                'foto' => 'image|mimes:jpg,jpeg,svg,png'
+            ]);
+            $foto = $request->file('foto')->store('User/Profil/Foto');
+        } else {
+            $foto = $user->foto;
+        }
+
+        $dusun = '';
+        if ($request->jabatan == 'kepala dusun') {
+            $dusun = $request->dusun;
+        }
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password ? bcrypt($request->password) : $user->password,
+            'alamat' => $request->alamat,
+            'telp' => $request->telp,
+            'jabatan' => $request->jabatan,
+            'dusun' => $dusun,
+            'foto' => $foto,
+        ]);
+        return redirect()->back()->with(['type' => 'success', 'message' => 'berhasil mengubah data user']);
+    })->name('setting-profile');
 
     Route::get('user', [UserController::class, 'index'])->name('user');
     Route::post('create-user', [UserController::class, 'store'])->name('create-user');

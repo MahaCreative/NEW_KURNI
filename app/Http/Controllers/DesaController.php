@@ -27,7 +27,7 @@ class DesaController extends Controller
 
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->with(['type' => 'errors', 'message' => $validator->errors()->all()]);
+            return redirect()->back()->with(['type' => 'error', 'message' => $validator->errors()->all()]);
         }
         $desa = Desa::first();
 
@@ -40,7 +40,7 @@ class DesaController extends Controller
             'alamat_kepala_desa' => $request->alamat_kepala_desa,
 
         ]);
-        return redirect()->back()->with(['type' => 'Success', 'message' => 'Berhasil memperbaharui profile Desa']);
+        return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil memperbaharui profile Desa']);
     }
 
     public function update_foto_desa(Request $request)

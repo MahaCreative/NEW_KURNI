@@ -26,6 +26,7 @@ class PendudukController extends Controller
 
 
         $roles = $request->user()->getRoleNames()[0];
+
         // dd($roles == 'kepala desa' or $roles == 'sekretaris desa');
         if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
             $penduduk = $query->get();
@@ -68,7 +69,7 @@ class PendudukController extends Controller
         ]);
         $penduduk = Penduduk::create($attr);
 
-        return redirect()->back();
+        return redirect()->back()->with(['type' => 'success', 'message' => 'berhasil menambah data penduduk ' . $penduduk->nama]);
     }
     public function update(Request $request)
     {

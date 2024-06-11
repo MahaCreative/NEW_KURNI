@@ -7,6 +7,7 @@ use App\Models\Darah;
 use App\Models\DetailDusun;
 use App\Models\Pekerjaan;
 use App\Models\Pendidikan;
+use App\Models\Penduduk;
 use App\Models\StatusHubunganDalamKeluarga;
 use App\Models\StatusPerkawinan;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,7 +29,10 @@ class KelahiranFactory extends Factory
         $dusun = DetailDusun::all();
         $jk = ['1', '2'];
         $tempatDilahirkan = ['rumah sakit', 'puskesmas', 'poliklinik', 'rumah', 'lainnya'];
+
         return [
+            'ayah_id' => rand(1, Penduduk::count()),
+            'ibu_id' => rand(1, Penduduk::count()),
             'kd_kelahiran' => rand(1111111111, 55555555555),
             'kk' => rand(1111111111111, 9999999999999999),
             'nama' => $this->faker->name(),

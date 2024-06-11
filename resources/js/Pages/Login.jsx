@@ -25,7 +25,7 @@ export default function Login() {
                 <form
                     onSubmit={submitHandler}
                     action=""
-                    className="py-3 px-5 rounded-md bg-orange-500 flex flex-col justify-center items-center gap-6 w-full"
+                    className="py-3 px-5 rounded-md  flex flex-col justify-center items-center gap-6 w-full"
                 >
                     <img
                         src={"/storage/" + desa.logo}

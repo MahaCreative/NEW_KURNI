@@ -55,6 +55,7 @@ class HandleInertiaRequests extends Middleware
             'pekerjaan' => Pekerjaan::all(),
             'auth' => [
                 'user' => $request->user(),
+
                 'roles' => $request->user() ? $request->user()->getRoleNames()[0] : []
             ],
             'ziggy' => fn () => [

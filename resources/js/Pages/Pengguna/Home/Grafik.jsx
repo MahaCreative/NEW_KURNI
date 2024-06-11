@@ -398,18 +398,6 @@ export default function Grafik() {
                 />
             </div>
             <div className=" bg-white py-2 px-4 rounded-md">
-                <div className="grid grid-cols-2 gap-4 my-3">
-                    <div className="w-full bg-purple-500 py-3 rounded-md text-center flex items-center justify-center shadow-sm shadow-gray-500/50">
-                        <div className="text-white text-xl ">
-                            <PieChart color="inherit" fontSize="inherit" />
-                        </div>
-                    </div>
-                    <div className="w-full bg-white py-3 rounded-md text-center flex items-center justify-center shadow-sm shadow-gray-500/50">
-                        <div className="text-purple-500 text-xl ">
-                            <BarChart color="inherit" fontSize="inherit" />
-                        </div>
-                    </div>
-                </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 ">
                     <div className=" rounded-lg overflow-hidden bg-white shadow-sm shadow-gray-500/50  relative">
                         <HighchartsReact

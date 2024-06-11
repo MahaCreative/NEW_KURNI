@@ -18,7 +18,7 @@ class UserController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            "name" => 'required|min:16|string',
+            "name" => 'required|min:6|string',
             "email" => 'required|email|unique:users,email',
             "password" => 'required|min:6',
             "alamat" => 'required|string|min:12',
@@ -57,7 +57,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "name" => 'required|string',
-            "email" => 'required|email|unique:users,email',
+            "email" => 'required|email|unique:users,email,' . $request->id,
             "password" => 'nullable|min:6',
             "alamat" => 'required|string|min:12',
             "telp" => 'required|numeric|min:12',
@@ -82,6 +82,8 @@ class UserController extends Controller
         $dusun = '';
         if ($request->jabatan == 'kepala dusun') {
             $dusun = $request->dusun;
+            $user->removeRole($user->roles->first()->name);
+            $user->assignRole($dusun);
         }
         $user->update([
             'name' => $request->name,

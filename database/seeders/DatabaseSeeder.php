@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         $user = User::create([
-            'email' => 'test@example.com',
+            'email' => 'admin@gmail.com',
             'password' => bcrypt('password'),
             'name' => 'Kepala Desa',
             'alamat' => 'Jl Diponegoro Kelurahan Karema',
@@ -55,6 +55,6 @@ class DatabaseSeeder extends Seeder
         foreach ($dusun as $item) {
             Role::create(['name' => $item->nama, 'guard_name' => 'web']);
         }
-        // Kelahiran::factory(1)->create();
+        Kelahiran::factory(100)->create();
     }
 }

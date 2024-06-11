@@ -66,16 +66,16 @@ class KelahiranController extends Controller
             return redirect()->back()->withErrors(['type' => 'error', 'message' => 'Nomor Kartu Keluarga Belum Terdaftar.', 'lanjut' => false]);
         }
         $ayah = Penduduk::where(function ($query) use ($request) {
-            $query->where('status_hubungan_dalam_keluarga_id', '2')
-                ->orWhere('status_hubungan_dalam_keluarga_id', '1');
+            // $query->where('status_hubungan_dalam_keluarga_id', '2')
+            //     ->orWhere('status_hubungan_dalam_keluarga_id', '1');
         })->where('nik', $request->nik_ayah)
             ->where('nama', $request->nama_ayah)
             ->where('kk', '=', $request->KK)->first();
         if ($ayah == null) {
             return redirect()->back()->withErrors(['type' => 'error', 'message' => 'Data Ayah belum terdaftar, silahkan memasukkan Data Ayah yang Valid', 'lanjut' => false]);
         }
-        $ibu = Penduduk::where('status_hubungan_dalam_keluarga_id', '=', '3')
-            ->where('nik', $request->nik_ibu)
+        // $ibu = Penduduk::where('status_hubungan_dalam_keluarga_id', '=', '3')
+        $ibu = Penduduk::where('nik', $request->nik_ibu)
             ->where('nama', $request->nama_ibu)
             ->where('kk', '=', $request->KK)->first();
         if ($ibu == null) {

@@ -150,7 +150,7 @@ export default function Index(props) {
             </div>
             <div className="bg-white py-2 px-4 rounded-md flex justify-between items-center my-3">
                 <h1 className="font-bold text-2xl text-orange-500 ">
-                    Data Pindahan Penduduk
+                    Data User
                 </h1>
                 <div className="flex gap-4">
                     <button

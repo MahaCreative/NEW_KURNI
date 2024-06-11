@@ -90,7 +90,7 @@ export default function Index(props) {
         {
             name: "#",
             selector: (row) => (
-                <div className="flex gap-1 items-center">
+                <div className="flex flex-col gap-1 items-center">
                     <Tooltip title={"Delete Data Pindah"}>
                         <button
                             onClick={() => deleteHandler(row)}
@@ -109,7 +109,7 @@ export default function Index(props) {
                     </Tooltip>
                 </div>
             ),
-            width: "110px",
+            width: "70px",
             wrap: true,
         },
         {
@@ -128,6 +128,7 @@ export default function Index(props) {
                     </Tooltip>
                 </div>
             ),
+            wrap: true,
         },
 
         {
@@ -147,6 +148,7 @@ export default function Index(props) {
                 </div>
             ),
             wrap: true,
+            width: "180px",
         },
         {
             name: "Alamat Tujuan",
@@ -159,6 +161,7 @@ export default function Index(props) {
                 </div>
             ),
             wrap: true,
+            width: "180px",
         },
 
         {
@@ -191,9 +194,11 @@ export default function Index(props) {
                 </div>
             ),
             wrap: true,
+
+            width: "140px",
         },
         {
-            name: "Konfirmasi Permintaan",
+            name: <p>Konfirmasi Permintaan</p>,
             selector: (row) => (
                 <select
                     onChange={(e) => konfirmasiHandler(e.target.value, row.id)}
@@ -211,7 +216,7 @@ export default function Index(props) {
                     <option value="di tolak">Di Tolak</option>
                 </select>
             ),
-            width: "250px",
+            width: "150px",
             wrap: true,
         },
     ];
@@ -441,7 +446,7 @@ export default function Index(props) {
                         title={
                             <div>
                                 <p>Jumlah Permintaan Dengan Status</p>
-                                <p>Dengan {item.nama} </p>
+                                <p>{item.nama} </p>
                             </div>
                         }
                         icon={<Group color="inherit" fontSize="inherit" />}
