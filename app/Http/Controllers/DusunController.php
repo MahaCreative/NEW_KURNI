@@ -30,7 +30,7 @@ class DusunController extends Controller
         $nama = $dusun->nama;
         $permission = Role::where('name', $nama)->first();
         $dusun->update(['nama' => $request->nama]);
-        $permission->update(['name' => $dusun->nama]);
+        $permission->update(['name' => $request->nama]);
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil memperbaharui data dusun ' . $nama]);
     }
 
