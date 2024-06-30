@@ -48,7 +48,7 @@ class PendudukController extends Controller
     {
 
         $attr = $request->validate([
-            'nik'                               => ['required', 'digits:16'],
+            'nik'                               => ['required', 'digits:16', 'unique:penduduks,nik'],
             'kk'                                => ['required', 'digits:16'],
             'nama'                              => ['required', 'string', 'max:64'],
             'jenis_kelamin'                     => ['required', 'numeric'],

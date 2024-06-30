@@ -31,15 +31,13 @@ class DataKartuKeluargaController extends Controller
         }
 
         $dusun = Dusun::with(['detail_dusun' => function ($q) {
-            $q->withCount('penduduk');
+            $q->withCount(['penduduk' => function ($q) {
+                $q->where('status_hubungan_dalam_keluarga_id', '=', 1);
+            }]);
         }])->get();
-        $countPendudukDusun = 0;
-        foreach ($dusun as $item) {
-            foreach ($item->detail_dusun as $detail) {
-                $countPendudukDusun += $detail->penduduk_count;
-            }
-            $item['total_penduduk'] = $countPendudukDusun;
-        }
+
+
+
         return inertia('DataKK/Index', compact('kk', 'dusun'));
     }
 

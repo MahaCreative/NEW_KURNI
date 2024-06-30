@@ -232,7 +232,9 @@ export default function Index(props) {
                     <div>
                         <Card
                             key={key}
-                            count={item.total_penduduk}
+                            count={item.detail_dusun.map(
+                                (item) => 0 + item.penduduk_count
+                            )}
                             title={
                                 <div>
                                     <p>Jumlah Penduduk </p>
