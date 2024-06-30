@@ -48,13 +48,12 @@ class DatabaseSeeder extends Seeder
                 DetailDusunSeeder::class,
             ]
         );
-        Penduduk::factory(500)->create();
-        Kematian::factory(1)->create();
-        Pindah::factory(335)->hasPengikut(3)->create();
+        // Penduduk::factory(500)->create();
+        // Kematian::factory(1)->create();
+
         $dusun = Dusun::all();
         foreach ($dusun as $item) {
             Role::create(['name' => $item->nama, 'guard_name' => 'web']);
         }
-        Kelahiran::factory(100)->create();
     }
 }

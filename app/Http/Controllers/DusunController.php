@@ -40,6 +40,7 @@ class DusunController extends Controller
         $dusun = Dusun::findOrFail($request->id);
         $nama = $dusun->nama;
         $permission = Role::where('name', $nama)->first();
+
         $permission->delete();
         $dusun->delete();
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil menghapus dusun ' . $nama]);
