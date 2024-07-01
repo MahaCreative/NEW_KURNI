@@ -251,6 +251,7 @@ class KelahiranController extends Controller
                 ];
                 Mail::to($kelahiran->email)->send(new EmailSuketKelahiran($data));
             }
+
             return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil memperbaharui konfirmasi data kelahiran ' . $nama]);
         }
     }

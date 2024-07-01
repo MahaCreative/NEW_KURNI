@@ -26,22 +26,32 @@ class PendudukController extends Controller
 
 
         $roles = $request->user()->getRoleNames()[0];
-
+        $jabatan = $request->user()->dusun;
         // dd($roles == 'kepala desa' or $roles == 'sekretaris desa');
         if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
             $penduduk = $query->get();
+            $jumlahPenduduk = Penduduk::count();
+            $jumlahKepalaKeluarga = StatusHubunganDalamKeluarga::withCount('penduduk')->where('nama', 'kepala keluarga')->first();
+            $jumlahLakiLaki = Penduduk::where('jenis_kelamin', '=', 1)->count();
+            $jumlahPerempuan = Penduduk::where('jenis_kelamin', '=', 2)->count();
         } else {
+            $dusun = Dusun::where('nama', $jabatan)->first();
+            $detail_dusun = DetailDusun::where('dusun_id', $dusun->id)->pluck('id');
+
             $penduduk = $query->whereHas('detail_dusun.dusun', function ($q) use ($roles) {
                 $q->where('nama', '=', $roles);
             })->get();
+            $jumlahPenduduk = Penduduk::whereIn('detail_dusun_id', $detail_dusun)->count();
+            $jumlahKepalaKeluarga = StatusHubunganDalamKeluarga::withCount(['penduduk' => function ($q) use ($detail_dusun) {
+                $q->whereIn('detail_dusun_id', $detail_dusun);
+            }])->where('nama', 'kepala keluarga')->first();
+            $jumlahLakiLaki = Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('jenis_kelamin', '=', 1)->count();
+            $jumlahPerempuan = Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('jenis_kelamin', '=', 2)->count();
         }
-        $jumlahPenduduk = Penduduk::count();
-        $jumlahKepalaKeluarga = StatusHubunganDalamKeluarga::withCount('penduduk')->where('nama', 'kepala keluarga')->first();
-        $jumlahLakiLaki = Penduduk::where('jenis_kelamin', '=', 1)->count();
-        $jumlahPerempuan = Penduduk::where('jenis_kelamin', '=', 2)->count();
 
 
-        return inertia('Penduduk/Index', compact('penduduk', 'jumlahPenduduk', 'jumlahKepalaKeluarga', 'jumlahLakiLaki', 'jumlahPerempuan'));
+
+        return inertia('Penduduk/Index', compact('penduduk', 'jumlahPenduduk', 'jumlahKepalaKeluarga', 'jumlahLakiLaki', 'jumlahPerempuan', 'jabatan'));
     }
 
     public function store(Request $request)

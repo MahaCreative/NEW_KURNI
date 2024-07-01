@@ -20,6 +20,7 @@ import Search from "@/Components/Search";
 
 export default function Index(props) {
     const penduduk = props.penduduk;
+    const jabatan = props.jabatan;
     const jumlahPenduduk = props.jumlahPenduduk;
     const jumlahKepalaKeluarga = props.jumlahKepalaKeluarga;
     const jumlahLakiLaki = props.jumlahLakiLaki;
@@ -316,6 +317,7 @@ export default function Index(props) {
                     }
                 >
                     <Form
+                        jabatan={jabatan}
                         model={model}
                         setModel={setModel}
                         setOpen={setModalTambah}

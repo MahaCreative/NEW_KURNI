@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Desa;
+use App\Models\DetailDusun;
 use App\Models\Dusun;
 use App\Models\Penduduk;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -12,33 +13,44 @@ class DataKartuKeluargaController extends Controller
 {
     public function index(Request $request)
     {
+        $jabatan = $request->user()->dusun;
+        $dusun = Dusun::where('nama', $jabatan)->first();
 
-        $query = Penduduk::query()->with(['detail_dusun' => function ($q) {
-            $q->with('dusun');
-        }])->where('status_hubungan_dalam_keluarga_id', '=', 1);
-        $roles = $request->user()->getRoleNames()[0];
-        if ($roles == 'kepala desa' or $roles == 'sekretaris desa') {
-            $kk = $query->get();
+
+        if ($jabatan) {
+            $detail_dusun = DetailDusun::where('dusun_id', $dusun->id)->pluck('id');
+            $kk = Penduduk::query()->with(['detail_dusun' => function ($q) {
+                $q->with('dusun');
+            }])->whereIn('detail_dusun_id', $detail_dusun)->where('status_hubungan_dalam_keluarga_id', '=', 1)->get();
+            foreach ($kk as $item) {
+                $data = Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('kk', $item->kk)->count();
+                $item['jumlah_keluarga'] = $data;
+            }
         } else {
-            $kk = $query->whereHas('detail_dusun.dusun', function ($q) use ($roles) {
-                $q->where('nama', '=', $roles);
-            })->get();
+            $kk = Penduduk::query()->with(['detail_dusun' => function ($q) {
+                $q->with('dusun');
+            }])->where('status_hubungan_dalam_keluarga_id', '=', 1)->get();
+            foreach ($kk as $item) {
+                $data = Penduduk::where('kk', $item->kk)->count();
+                $item['jumlah_keluarga'] = $data;
+            }
         }
 
-        foreach ($kk as $item) {
-            $data = Penduduk::where('kk', $item->kk)->count();
-            $item['jumlah_keluarga'] = $data;
+
+
+
+
+        $stat_kk = array();
+        foreach (Dusun::latest()->get() as $item) {
+            $dusun = Dusun::where('nama', $item->nama)->first();
+            $detail_dusun = DetailDusun::where('dusun_id', $dusun->id)->pluck('id');
+            $penduduk = Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('status_hubungan_dalam_keluarga_id', '=', 1)->count();
+            $stat_kk[] = [
+                "nama" => $item->nama,
+                "jumlah_penduduk" => $penduduk,
+            ];
         }
-
-        $dusun = Dusun::with(['detail_dusun' => function ($q) {
-            $q->withCount(['penduduk' => function ($q) {
-                $q->where('status_hubungan_dalam_keluarga_id', '=', 1);
-            }]);
-        }])->get();
-
-
-
-        return inertia('DataKK/Index', compact('kk', 'dusun'));
+        return inertia('DataKK/Index', compact('kk',  'stat_kk'));
     }
 
     public function per_kk(Request $request, $kk)

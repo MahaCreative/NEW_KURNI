@@ -302,14 +302,8 @@ export default function Index(props) {
                 </div>
                 <Search link={route("kematian")} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 my-3">
-                <Card
-                    count={10}
-                    title={"Jumlah Kepala Keluarga"}
-                    icon={<Group color="inherit" fontSize="inherit" />}
-                />
-            </div>
-            <div className="rounded-lg">
+
+            <div className="rounded-lg my-2">
                 <DataTable data={kematian} pagination columns={columns} />
             </div>
         </div>

@@ -17,6 +17,7 @@ HighchartsExporting(Highcharts);
 HighchartsAccessibility(Highcharts);
 export default function Index(props) {
     const kk = props.kk;
+    const stat_kk = props.stat_kk;
     const dusun = props.dusun;
     const [modalFormExport, setModalForm] = useState(false);
     const columns = [
@@ -118,12 +119,10 @@ export default function Index(props) {
                 colorByPoint: true,
                 shadow: 1,
                 border: 1,
-                data: dusun
-                    ? dusun.map((item) => ({
-                          name: item.nama,
-                          y: item.total_penduduk,
-                      }))
-                    : [], // Pastikan untuk menangani jika data.agama masih kosong
+                data: stat_kk.map((item) => ({
+                    name: item.nama,
+                    y: item.jumlah_penduduk,
+                })), // Pastikan untuk menangani jika data.agama masih kosong
             },
         ],
     };
@@ -186,15 +185,14 @@ export default function Index(props) {
                 colorByPoint: true,
                 shadow: 1,
                 border: 1,
-                data: dusun
-                    ? dusun.map((item) => ({
-                          name: item.nama,
-                          y: item.total_penduduk,
-                      }))
-                    : [], // Pastikan untuk menangani jika data.agama masih kosong
+                data: stat_kk.map((item) => ({
+                    name: item.nama,
+                    y: item.jumlah_penduduk,
+                })), // Pastikan untuk menangani jika data.agama masih kosong
             },
         ],
     };
+
     return (
         <div className="py-8 px-4 md:px-8 lg:px-16">
             <Modal
@@ -223,21 +221,19 @@ export default function Index(props) {
             </div>
             <div
                 className={`grid grid-cols-1 md:grid-cols-2 ${
-                    dusun.length >= 5
+                    stat_kk.length >= 5
                         ? "lg:grid-cols-5"
-                        : `lg:grid-cols-${dusun.length}`
+                        : `lg:grid-cols-${stat_kk.length}`
                 } gap-3 my-3`}
             >
-                {dusun.map((item, key) => (
+                {stat_kk.map((item, key) => (
                     <div>
                         <Card
                             key={key}
-                            count={item.detail_dusun.map(
-                                (item) => 0 + item.penduduk_count
-                            )}
+                            count={item.jumlah_penduduk}
                             title={
                                 <div>
-                                    <p>Jumlah Penduduk </p>
+                                    <p>Jumlah KK </p>
                                     <p className="font-bold text-base">
                                         Dusun {item.nama}
                                     </p>

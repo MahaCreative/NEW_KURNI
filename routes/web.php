@@ -184,3 +184,15 @@ Route::get('api/get-detail-dusun', function (Request $request) {
 
     return response()->json($detail->detail_dusun);
 });
+
+Route::get('get-detail-dusun', function (Request $request) {
+    if ($request->nama_dusun) {
+
+
+        $detail = Dusun::where('nama', '=', $request->nama_dusun)->with('detail_dusun')->first();
+
+        return response()->json($detail->detail_dusun);
+    } else {
+        return response()->json([]);
+    }
+});

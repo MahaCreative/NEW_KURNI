@@ -2,6 +2,7 @@ import InputText from "@/Components/InputText";
 import { useForm, usePage } from "@inertiajs/react";
 import {
     FormControl,
+    FormHelperText,
     InputLabel,
     MenuItem,
     Select,
@@ -12,11 +13,11 @@ import { useState } from "react";
 import { useEffect } from "react";
 import ReactSelect from "react-select";
 
-export default function Form({ model, setModel, setOpen }) {
+export default function Form({ model, setModel, setOpen, jabatan }) {
     const { data, setData, post, errors, reset } = useForm({
         nik: "",
         kk: "",
-        dusun: "",
+        dusun: jabatan ? jabatan : "",
         nama: "",
         jenis_kelamin: "",
         tempat_lahir: "",
@@ -87,11 +88,31 @@ export default function Form({ model, setModel, setOpen }) {
             },
         });
     };
+    const [namaDusun, setNamaDusun] = useState("");
     const pilihDusun = (e) => {
-        setModelDusun(e.target.value);
-        setData({ ...data, dusun: e.target.value.nama });
-        console.log(e.target.value.nama);
+        setNamaDusun(e.target.value);
+        setData({ ...data, dusun: e.target.value });
+        console.log(namaDusun);
     };
+
+    const fetchDetail = async () => {
+        let dusun = data.dusun;
+        try {
+            const response = await fetch(
+                "/get-detail-dusun?nama_dusun=" + dusun
+            );
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            setModelDusun(data);
+        } catch (error) {}
+    };
+
+    useEffect(() => {
+        fetchDetail();
+    }, [namaDusun]);
+
     return (
         <div className="w-[90vw] max-h-[80vh] overflow-y-auto">
             <form onSubmit={model ? updateHandler : submitHandler}>
@@ -145,13 +166,14 @@ export default function Form({ model, setModel, setOpen }) {
                         />
                     </div>
                     <FormControl fullWidth>
-                        <TextField
-                            id="outlined-select-currency"
-                            select
+                        <InputLabel id="demo-simple-select-helper-label">
+                            Jenis Kelamin
+                        </InputLabel>
+                        <Select
+                            labelId="demo-simple-select-helper-label"
+                            id="demo-simple-select-helper"
                             label="Jenis Kelamin"
                             name="jenis_kelamin"
-                            error={errors.jenis_kelamin ? true : false}
-                            helperText={errors.jenis_kelamin}
                             value={data.jenis_kelamin}
                             defaultValue={data.jenis_kelamin}
                             onChange={(e) =>
@@ -164,7 +186,12 @@ export default function Form({ model, setModel, setOpen }) {
                             <MenuItem value="">Pilih Jenis Kelamin</MenuItem>
                             <MenuItem value="1">Laki-Laki</MenuItem>
                             <MenuItem value="2">Perempuan</MenuItem>
-                        </TextField>
+                        </Select>
+                        {errors.jenis_kelamin && (
+                            <FormHelperText className="text-red-500">
+                                {errors.jenis_kelamin}
+                            </FormHelperText>
+                        )}
                     </FormControl>
                     <FormControl fullWidth>
                         <InputText
@@ -448,30 +475,32 @@ export default function Form({ model, setModel, setOpen }) {
                 </FormControl>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 my-3">
                     <FormControl fullWidth>
-                        <TextField
-                            id="outlined-select-currency"
-                            select
+                        <InputLabel id="demo-simple-select-helper-label">
+                            Dusun
+                        </InputLabel>
+                        <Select
+                            labelId="demo-simple-select-helper-label"
+                            id="demo-simple-select-helper"
                             label="Dusun"
                             name="dusun"
+                            disabled={jabatan ? true : false}
                             value={data.dusun}
                             defaultValue={data.dusun}
-                            error={errors.detail_dusun_id ? true : false}
-                            helperText={
-                                errors.detail_dusun_id
-                                    ? errors.detail_dusun_id
-                                    : model
-                                    ? "biarkan kosong jika tidak ingin merubah dusun dan detail dusun"
-                                    : ""
-                            }
                             onChange={(e) => pilihDusun(e)}
                         >
                             <MenuItem value={null}>Pilih Dusun</MenuItem>
+
                             {dusun.map((item, key) => (
-                                <MenuItem key={key} value={item}>
+                                <MenuItem key={key} value={item.nama}>
                                     {item.nama}
                                 </MenuItem>
                             ))}
-                        </TextField>
+                        </Select>
+                        {errors.detail_dusun_id && (
+                            <FormHelperText className="text-red-500">
+                                {errors.detail_dusun_id}
+                            </FormHelperText>
+                        )}
                     </FormControl>
                     <FormControl fullWidth>
                         {modelDusun !== null ? (
@@ -497,7 +526,7 @@ export default function Form({ model, setModel, setOpen }) {
                                     })
                                 }
                             >
-                                {modelDusun?.detail_dusun.map((item, key) => (
+                                {modelDusun.map((item, key) => (
                                     <MenuItem key={key} value={item.id}>
                                         {"RW/RT " + item.rw + "/" + item.rt}
                                     </MenuItem>

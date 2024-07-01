@@ -376,7 +376,7 @@ export default function Grafik() {
         <div className="flex flex-col gap-4 lg:px-16px-4 md:px-8 py-3">
             <div className="  grid grid-cols-2 lg:grid-cols-4 gap-5">
                 <Card
-                    count={10}
+                    count={data.jumlah_kepala_keluarga}
                     title={"Jumlah Kepala Keluarga"}
                     icon={<Group color="inherit" fontSize="inherit" />}
                 />
