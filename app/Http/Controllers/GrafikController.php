@@ -17,8 +17,40 @@ class GrafikController extends Controller
 {
     public function index(Request $request)
     {
-        $jabatan = $request->user()->dusun;
-        if ($jabatan == null) {
+        if ($request->user()) {
+            $jabatan = $request->user()->dusun;
+
+            if ($jabatan == null) {
+                return response()->json([
+                    'jumlah_kepala_keluarga' => Penduduk::where('status_hubungan_dalam_keluarga_id', 1)->count(),
+                    'totalPenduduk' => Penduduk::count(),
+                    'totalPerempuan' => Penduduk::where('jenis_kelamin', 2)->count(),
+                    'totalLaki' => Penduduk::where('jenis_kelamin', 1)->count(),
+                    'pekerjaan'     => $this->grafikPekerjaan(),
+                    'pendidikan'    => $this->grafikPendidikan(),
+                    'perkawinan'    => $this->grafikPerkawinan(),
+                    'agama'         => $this->grafikAgama(),
+                    'darah'         => $this->grafikDarah(),
+                    'usia'          => $this->grafikUsia(),
+                ]);
+            } else {
+                $dusun = Dusun::where('nama', $jabatan)->first();
+                $detail_dusun = DetailDusun::where('dusun_id', $dusun->id)->pluck('id');
+
+                return response()->json([
+                    'jumlah_kepala_keluarga' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('status_hubungan_dalam_keluarga_id', 1)->count(),
+                    'totalPenduduk' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->count(),
+                    'totalPerempuan' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('jenis_kelamin', 2)->count(),
+                    'totalLaki' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('jenis_kelamin', 1)->count(),
+                    'pekerjaan'     => $this->grafikPekerjaan($jabatan),
+                    'pendidikan'    => $this->grafikPendidikan($jabatan),
+                    'perkawinan'    => $this->grafikPerkawinan($jabatan),
+                    'agama'         => $this->grafikAgama($jabatan),
+                    'darah'         => $this->grafikDarah($jabatan),
+                    'usia'          => $this->grafikUsia($jabatan),
+                ]);
+            }
+        } else {
             return response()->json([
                 'jumlah_kepala_keluarga' => Penduduk::where('status_hubungan_dalam_keluarga_id', 1)->count(),
                 'totalPenduduk' => Penduduk::count(),
@@ -30,22 +62,6 @@ class GrafikController extends Controller
                 'agama'         => $this->grafikAgama(),
                 'darah'         => $this->grafikDarah(),
                 'usia'          => $this->grafikUsia(),
-            ]);
-        } else {
-            $dusun = Dusun::where('nama', $jabatan)->first();
-            $detail_dusun = DetailDusun::where('dusun_id', $dusun->id)->pluck('id');
-
-            return response()->json([
-                'jumlah_kepala_keluarga' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('status_hubungan_dalam_keluarga_id', 1)->count(),
-                'totalPenduduk' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->count(),
-                'totalPerempuan' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('jenis_kelamin', 2)->count(),
-                'totalLaki' => Penduduk::whereIn('detail_dusun_id', $detail_dusun)->where('jenis_kelamin', 1)->count(),
-                'pekerjaan'     => $this->grafikPekerjaan($jabatan),
-                'pendidikan'    => $this->grafikPendidikan($jabatan),
-                'perkawinan'    => $this->grafikPerkawinan($jabatan),
-                'agama'         => $this->grafikAgama($jabatan),
-                'darah'         => $this->grafikDarah($jabatan),
-                'usia'          => $this->grafikUsia($jabatan),
             ]);
         }
     }
