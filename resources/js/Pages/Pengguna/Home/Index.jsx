@@ -184,11 +184,11 @@ export default function PenggunaLayout({ children, title }) {
                         </p>
                     </div>
                     <div className="">
-                        <img
-                            src="Image/gambat1.png"
+                        {/* <img
+                            src="Image/fotoDesa.jpg"
                             alt=""
-                            className="hidden md:block translate-x-[50%] md:w-[100%] lg:w-[80%] md:translate-x-[-20%] lg:translate-x-[10%]"
-                        />
+                            className="hidden md:block translate-x-[50%] md:w-[450px] lg:w-[350px] md:translate-x-[-20%] lg:translate-x-[10%] h-[270px]"
+                        /> */}
                     </div>
                 </div>
             </div>

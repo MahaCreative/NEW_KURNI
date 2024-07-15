@@ -40,7 +40,7 @@ Route::post('login', function (Request $request) {
     // dd($request->all());
     $attr = $request->validate([
         'email' => "email|required|string",
-        'password' => "confirmed|min:8",
+        'password' => "confirmed|min:6",
     ]);
 
     $credentials = $request->only('email', 'password');
