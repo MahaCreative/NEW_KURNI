@@ -169,8 +169,8 @@ export default function PenggunaLayout({ children, title }) {
                 ref={homeRef}
                 className="left-0 top-0 w-full h-[100vh] lg:h-screen bg-[url('Image/bg.png')] bg-no-repeat bg-cover md:bg-contain bg-orange-500 bg-right-top"
             >
-                <div className="w-full h-[inherit] flex flex-col-reverse justify-center md:flex-row items-center bg-slate-950/10">
-                    <div className="px-4 md:px-8 lg:px-16  lg:w-[100%]">
+                <div className="w-full h-[inherit] flex flex-col-reverse justify-center lg:justify-between md:flex-row items-center bg-slate-950/10">
+                    <div className="px-4 md:px-8   lg:w-[70%]">
                         <h1 className="capitalize text-4xl lg:text-6xl font-extrabold text-white font-fira leading-none">
                             Aplikasi & Pendataan Warga Desa {desa.nama_desa}
                         </h1>
@@ -183,12 +183,12 @@ export default function PenggunaLayout({ children, title }) {
                             ini.
                         </p>
                     </div>
-                    <div className="">
-                        {/* <img
-                            src="Image/fotoDesa.jpg"
+                    <div className="px-8">
+                        <img
+                            src="Image/fotoDesa1.jpg"
                             alt=""
-                            className="hidden md:block translate-x-[50%] md:w-[450px] lg:w-[350px] md:translate-x-[-20%] lg:translate-x-[10%] h-[270px]"
-                        /> */}
+                            className="hidden md:block md:w-[400px] lg:w-[700px]  h-[270px] object-cover rounded-md transition-all duration-300 ease-in-out"
+                        />
                     </div>
                 </div>
             </div>
