@@ -55,7 +55,7 @@ export default function PenggunaLayout({ children, title }) {
     };
     return (
         <div className="w-full h-screen bg-orange-500 relative">
-            <Head title={title} />
+            <Head title={"Home"} />
             <Modal open={login} setOpen={setLogin} title={"Login Admin"}>
                 <Login />
             </Modal>
