@@ -97,9 +97,9 @@ export default function Form({ model, setModel, setOpen }) {
                                 }
                             >
                                 <MenuItem value="">Pilih Jabatan</MenuItem>
-                                <MenuItem value="sekretaris desa">
+                                {/* <MenuItem value="sekretaris desa">
                                     Sekretaris Desa
-                                </MenuItem>
+                                </MenuItem> */}
                                 <MenuItem value="kepala dusun">
                                     Kepala Dusun
                                 </MenuItem>
