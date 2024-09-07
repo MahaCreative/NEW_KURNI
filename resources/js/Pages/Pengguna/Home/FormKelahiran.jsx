@@ -57,6 +57,7 @@ export default function FormKelahiran({ ...props }) {
                     icon: error.type,
                     confirmButtonText: "OK",
                 });
+                props.getLoading(false);
             },
             preserveScroll: true,
         });
@@ -91,6 +92,7 @@ export default function FormKelahiran({ ...props }) {
                     icon: error.type,
                     confirmButtonText: "OK",
                 });
+                props.getLoading(false);
             },
             onSuccess: () => {
                 resetFormulirOrangTua();

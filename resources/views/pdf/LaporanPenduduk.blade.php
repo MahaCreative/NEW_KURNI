@@ -81,9 +81,9 @@
             <div class="flex-container">
                 <img src="Image/favicon.png" class="logo item" />
                 <div class="kop item">
-                    <h1 class="">PEMERINTAH KABUPATEN MAMUJU</h1>
-                    <h1 class="">Kantor Desa {{ $desa->nama_desa }}</h1>
-                    <h1 class="">{{ $desa->nama_kecamatan }}</h1>
+                <h1 class="">PEMERINTAH KABUPATEN MAMUJU</h1>
+                    <h1 class="">KECAMATAN {{ $desa->nama_kecamatan }}</h1>
+                    <h1 class="">{{ $desa->nama_desa }}</h1>
                     <p class="">{{ $desa->alamat }}</p>
                 </div>
                 <img src="Image/favicon.png" class="logo item" />

@@ -176,6 +176,9 @@ export default function Grafik() {
         chart: {
             type: "bar",
         },
+        title: {
+            text: "Pekerjaan",
+        },
         subtitle: {
             text: "Total Penduduk: " + data.totalPenduduk,
         },

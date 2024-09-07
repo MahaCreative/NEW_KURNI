@@ -123,6 +123,28 @@ class KelahiranController extends Controller
             'surat_keterangan_lahir' => $surat_keterangan_lahir,
             'status_permintaan' => 'di terima'
         ]);
+                $penduduk = Penduduk::create([
+            'nik' => $request->nik,
+            'kk' => $request->KK,
+            'nama' => $request->nama,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'agama_id' => $request->agama_id,
+            'pendidikan_id' => '1',
+            'pekerjaan_id' => '1',
+            'darah_id' => $request->darah_id,
+            // 'ayah_id' => $ayah->id,
+            'nik_ayah' => $request->nik_ayah,
+            'nama_ayah' => $request->nama_ayah,
+            'status_perkawinan_id' => 1,
+            'status_hubungan_dalam_keluarga_id' => 4,
+            // 'ibu_id' => $ibu->id,
+            'nik_ibu' => $request->nik_ibu,
+            'nama_ibu' => $request->nama_ibu,
+            'alamat' => $ayah->alamat,
+            'detail_dusun_id' => $ayah->detail_dusun_id,
+        ]);
 
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil menambahkan data kelahiran baru']);
     }
@@ -238,6 +260,7 @@ class KelahiranController extends Controller
         if ($request->konfirmasi !== null) {
             $kelahiran->update(['status_permintaan' => $request->konfirmasi]);
             $data = Penduduk::findOrFail($kelahiran->ayah_id);
+            
             if ($kelahiran->email) {
                 $data = [
                     'id' => $kelahiran->id,
@@ -249,7 +272,41 @@ class KelahiranController extends Controller
                     'link_permintaan' => route('home'),
                     'desa' => Desa::first(),
                 ];
-                Mail::to($kelahiran->email)->send(new EmailSuketKelahiran($data));
+                if($request->konfirmasi == 'di terima'){
+                    $ayah = Penduduk::where(function ($query) use ($request) {
+                        // $query->where('status_hubungan_dalam_keluarga_id', '2')
+                        //     ->orWhere('status_hubungan_dalam_keluarga_id', '1');
+                    })->where('nik', $kelahiran->nik_ayah)
+                        ->where('nama', $kelahiran->nama_ayah)
+                        ->where('kk', '=', $kelahiran->KK)->first();
+                $ibu = Penduduk::where('nik', $kelahiran->nik_ibu)
+                        ->where('nama', $kelahiran->nama_ibu)
+                        ->where('kk', '=', $kelahiran->KK)->first();
+                    $penduduk = Penduduk::create([
+                        'nik' => $kelahiran->nik,
+                        'kk' => $kelahiran->KK,
+                        'nama' => $kelahiran->nama,
+                        'jenis_kelamin' => $kelahiran->jenis_kelamin,
+                        'tempat_lahir' => $kelahiran->tempat_lahir,
+                        'tanggal_lahir' => $kelahiran->tanggal_lahir,
+                        'agama_id' => $kelahiran->agama_id,
+                        'pendidikan_id' => '1',
+                        'pekerjaan_id' => '1',
+                        'darah_id' => $kelahiran->darah_id,
+                        // 'ayah_id' => $ayah->id,
+                        'nik_ayah' => $kelahiran->nik_ayah,
+                        'nama_ayah' => $kelahiran->nama_ayah,
+                        'status_perkawinan_id' => 1,
+                        'status_hubungan_dalam_keluarga_id' => 4,
+                        // 'ibu_id' => $ibu->id,
+                        'nik_ibu' => $kelahiran->nik_ibu,
+                        'nama_ibu' => $kelahiran->nama_ibu,
+                        // 'tempat_dilahirkan' => $kelahiran->tempat_dilahirkan,
+                        'alamat' => $ayah->alamat,
+                        'detail_dusun_id' => $ayah->detail_dusun_id,
+                    ]);
+                }
+                // Mail::to($kelahiran->email)->send(new EmailSuketKelahiran($data));
             }
 
             return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil memperbaharui konfirmasi data kelahiran ' . $nama]);

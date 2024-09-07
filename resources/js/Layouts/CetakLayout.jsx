@@ -17,11 +17,11 @@ export default function CetakLayout({ props, children, title }) {
                         <h1 className="font-bold text-xl leading-none uppercase">
                             PEMERINTAH KABUPATEN MAMUJU
                         </h1>
+                        <h2 className="text-xl font-bold leading-none uppercase">
+                            KECAMATAN {desa.nama_kecamatan}
+                        </h2>
                         <h2 className="text-lg font-semibold leading-none uppercase">
                             Kantor Desa {desa.nama_desa}
-                        </h2>
-                        <h2 className="text-xl font-bold leading-none uppercase">
-                            {desa.nama_kecamatan}
                         </h2>
                         <p className="text-sm font-light italic capitalize">
                             {desa.alamat}

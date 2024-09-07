@@ -36,8 +36,8 @@ class KematianController extends Controller
     {
 
         $attr = $request->validate([
-            'nik'                               => ['required', 'digits:16', 'unique:kematians,nik'],
-            'kk'                                => ['required', 'digits:16', 'unique:kematians,kk'],
+            'nik'                               => ['required', 'digits:16'],
+            'kk'                                => ['required', 'digits:16'],
             'nama'                              => ['required', 'string', 'max:64'],
             'jenis_kelamin'                     => ['required', 'numeric'],
             'tempat_lahir'                      => ['required', 'string',],
@@ -64,6 +64,7 @@ class KematianController extends Controller
         $attr['detail_dusun_id'] = $request->detail_dusun_id;
         $attr['status_konfirmasi'] = 'di terima';
         $kematian = Kematian::create($attr);
+        $penduduk->delete();
     }
     public function update(Request $request)
     {
@@ -109,7 +110,7 @@ class KematianController extends Controller
     {
 
         $kematian = Kematian::findOrFail($request->id);
-        // dd($request->all());
+        
         if ($request->konfirmasi !== null) {
             $kematian->update(['status_konfirmasi' => $request->konfirmasi]);
             if ($kematian->email) {
@@ -123,7 +124,10 @@ class KematianController extends Controller
                     'link_permintaan' => route('home'),
                     'desa' => Desa::first(),
                 ];
-                Mail::to($kematian->email)->send(new EmailSuketKelahiran($data));
+                $penduduk = Penduduk::where('kk', $kematian->kk)->where('nik', $kematian->nik)->first();
+                $penduduk->delete();
+
+                // Mail::to($kematian->email)->send(new EmailSuketKelahiran($data));
             }
         }
         return redirect()->back()->with(['type' => 'success', 'message' => 'Berhasil mengkonfirmasi data kematian']);
@@ -194,8 +198,8 @@ class KematianController extends Controller
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'nik'                               => ['required', 'digits:16', 'unique:kematians,nik'],
-            'kk'                                => ['required', 'digits:16', 'unique:kematians,kk'],
+            'nik'                               => ['required', 'digits:16' ],
+            'kk'                                => ['required', 'digits:16'],
             'nama'                              => ['required', 'string', 'max:64'],
             'jenis_kelamin'                     => ['required', 'numeric'],
             'tempat_lahir'                      => ['required', 'string',],
